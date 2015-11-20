@@ -30,6 +30,19 @@ namespace notes_app
             NotesWindow.NOTES.Add( "" );
 
             this.loadNote( 0 );
+
+                // keyboard shortcuts
+            var newNote = new RoutedCommand();
+            newNote.InputGestures.Add( new KeyGesture( Key.N, ModifierKeys.Control ) );
+            CommandBindings.Add( new CommandBinding( newNote, newNoteListener ) );
+
+            var previous = new RoutedCommand();
+            previous.InputGestures.Add( new KeyGesture( Key.Q, ModifierKeys.Control ) );
+            CommandBindings.Add( new CommandBinding( previous, previousNoteListener ) );
+
+            var next = new RoutedCommand();
+            next.InputGestures.Add( new KeyGesture( Key.W, ModifierKeys.Control ) );
+            CommandBindings.Add( new CommandBinding( next, nextNoteListener ) );
             }
         
 

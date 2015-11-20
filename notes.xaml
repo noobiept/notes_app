@@ -5,14 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:notes_app"
         mc:Ignorable="d"
-        Title="Notes" Height="350" Width="500" MinWidth="250" MinHeight="250">
+        Title="Notes" Height="350" Width="500" MinWidth="200" MinHeight="200">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </Window.Resources>
     <Grid>
         <DockPanel>
             <Button x:Name="new_note" Content="New Note" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="newNoteListener" />
 
-            <Button x:Name="next" Content="Next" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="nextNoteListener" />
-            <Button x:Name="previous" Content="Previous" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="previousNoteListener" />
+            <Button x:Name="next" ToolTip="Next" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="nextNoteListener">
+                <Canvas>
+                    <Path Fill="Black" Data="M -3 -3 L -3 3 L 3 0 Z"/>
+                </Canvas>
+            </Button>
+            <Button x:Name="previous" ToolTip="Previous" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="previousNoteListener">
+                <Canvas>
+                    <Path Fill="Black" Data="M 3 3 L 3 -3 L -3 0 Z" />
+                </Canvas>
+            </Button>
         </DockPanel>
-        <TextBox x:Name="textBox" Margin="0,22,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="textBox" Margin="0,20,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
     </Grid>
 </Window>
