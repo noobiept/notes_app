@@ -51,6 +51,7 @@ namespace notes_app
 
             if ( previousPosition < 0 )
                 {
+                this.textBox.Focus();
                 return;
                 }
 
@@ -65,6 +66,7 @@ namespace notes_app
 
             if ( nextPosition >= NotesWindow.NOTES.Count )
                 {
+                this.textBox.Focus();
                 return;
                 }
 
@@ -77,6 +79,7 @@ namespace notes_app
             {
             NotesWindow.CURRENT_POSITION = position;
             this.textBox.Text = NotesWindow.NOTES[ position ];
+            this.textBox.Focus();
 
             this.Title = "Notes - " + (position + 1);
             }

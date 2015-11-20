@@ -5,11 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:notes_app"
         mc:Ignorable="d"
-        Title="Notes" Height="350" Width="525">
-    <Grid Margin="0,0,0.0,0.0">
-        <Button x:Name="new_note" Content="New Note" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="newNoteListener"/>
+        Title="Notes" Height="350" Width="500" MinWidth="250" MinHeight="250">
+    <Grid>
+        <DockPanel>
+            <Button x:Name="new_note" Content="New Note" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="newNoteListener" />
+
+            <Button x:Name="next" Content="Next" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="nextNoteListener" />
+            <Button x:Name="previous" Content="Previous" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="previousNoteListener" />
+        </DockPanel>
         <TextBox x:Name="textBox" Margin="0,22,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
-        <Button x:Name="previous" Content="Previous" HorizontalAlignment="Right" Margin="0,0,80,0" VerticalAlignment="Top" Width="75" Click="previousNoteListener" />
-        <Button x:Name="next" Content="Next" HorizontalAlignment="Right" Margin="433,0,0,0" VerticalAlignment="Top" Width="75" Click="nextNoteListener" />
     </Grid>
 </Window>
