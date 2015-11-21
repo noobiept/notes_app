@@ -36,6 +36,10 @@ namespace notes_app
             newNote.InputGestures.Add( new KeyGesture( Key.N, ModifierKeys.Control ) );
             CommandBindings.Add( new CommandBinding( newNote, newNoteListener ) );
 
+            var removeNote = new RoutedCommand();
+            removeNote.InputGestures.Add( new KeyGesture( Key.R, ModifierKeys.Control ) );
+            CommandBindings.Add( new CommandBinding( removeNote, removeNoteListener ) );
+
             var previous = new RoutedCommand();
             previous.InputGestures.Add( new KeyGesture( Key.Q, ModifierKeys.Control ) );
             CommandBindings.Add( new CommandBinding( previous, previousNoteListener ) );
@@ -55,6 +59,32 @@ namespace notes_app
             NotesWindow.NOTES.Add( "" );
 
             this.loadNote( position );
+            }
+
+
+        private void removeNoteListener( object sender, RoutedEventArgs e )
+            {
+                // when there's only 1 note, don't remove it, clear it instead
+            if ( NotesWindow.NOTES.Count <= 1 )
+                {
+                NotesWindow.NOTES[ 0 ] = "";
+                this.textBox.Text = "";
+                this.textBox.Focus();
+                }
+
+            else
+                {
+                NotesWindow.NOTES.RemoveAt( NotesWindow.CURRENT_POSITION );
+
+                var show = NotesWindow.CURRENT_POSITION;
+
+                if ( show >= NotesWindow.NOTES.Count )
+                    {
+                    show--;
+                    }
+
+                this.loadNote( show );
+                }
             }
 
 
@@ -95,6 +125,26 @@ namespace notes_app
             this.textBox.Focus();
 
             this.Title = "Notes - " + (position + 1);
+
+            if ( position == 0 )
+                {
+                this.previous.IsEnabled = false;
+                }
+
+            else
+                {
+                this.previous.IsEnabled = true;
+                }
+
+            if ( position + 1 == NotesWindow.NOTES.Count )
+                {
+                this.next.IsEnabled = false;
+                }
+
+            else
+                {
+                this.next.IsEnabled = true;
+                }
             }
 
 

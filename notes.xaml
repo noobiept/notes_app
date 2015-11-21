@@ -13,18 +13,11 @@
     </Window.Resources>
     <Grid>
         <DockPanel>
-            <Button x:Name="new_note" Content="New Note" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="newNoteListener" />
+            <Button x:Name="new_note" Content="New Note" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="newNoteListener" />
+            <Button x:Name="remove_note" Content="Remove Note" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Click="removeNoteListener" />
 
-            <Button x:Name="next" ToolTip="Next" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="nextNoteListener">
-                <Canvas>
-                    <Path Fill="Black" Data="M -3 -3 L -3 3 L 3 0 Z"/>
-                </Canvas>
-            </Button>
-            <Button x:Name="previous" ToolTip="Previous" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="previousNoteListener">
-                <Canvas>
-                    <Path Fill="Black" Data="M 3 3 L 3 -3 L -3 0 Z" />
-                </Canvas>
-            </Button>
+            <Button x:Name="next" Content="▶" ToolTip="Next" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="nextNoteListener" />
+            <Button x:Name="previous" Content="◀" ToolTip="Previous" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="previousNoteListener" />
         </DockPanel>
         <TextBox x:Name="textBox" Margin="0,20,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
     </Grid>
