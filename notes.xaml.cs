@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,24 +13,44 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 
 
 namespace notes_app
     {
     public partial class NotesWindow : Window
         {
-        static List<string> NOTES = new List<string>();
-        static int CURRENT_POSITION = 0;
+        public struct Data {
+            public List<string> notes;
+            public int currentPosition;
+        };
+
+        static string FILE_NAME = "data.txt";
+        static public Data DATA;        
 
 
         public NotesWindow()
             {
             InitializeComponent();
+            
+            try {
+                StreamReader file = new StreamReader( NotesWindow.FILE_NAME );
 
-                // start with a single note
-            NotesWindow.NOTES.Add( "" );
+                string data = file.ReadToEnd();
+                file.Close();
 
-            this.loadNote( 0 );
+                NotesWindow.DATA = JsonConvert.DeserializeObject<Data>( data );
+                }
+            
+            catch(Exception e)
+                {
+                    // start with a single note
+                NotesWindow.DATA.notes = new List<string>();
+                NotesWindow.DATA.notes.Add( "" );
+                NotesWindow.DATA.currentPosition = 0;
+                }
+
+            this.loadNote( NotesWindow.DATA.currentPosition );
 
                 // keyboard shortcuts
             var newNote = new RoutedCommand();
@@ -55,8 +76,8 @@ namespace notes_app
             this.saveCurrentNote();
 
                 // a new note is added at the end
-            var position = NotesWindow.NOTES.Count;
-            NotesWindow.NOTES.Add( "" );
+            var position = NotesWindow.DATA.notes.Count;
+            NotesWindow.DATA.notes.Add( "" );
 
             this.loadNote( position );
             }
@@ -65,20 +86,20 @@ namespace notes_app
         private void removeNoteListener( object sender, RoutedEventArgs e )
             {
                 // when there's only 1 note, don't remove it, clear it instead
-            if ( NotesWindow.NOTES.Count <= 1 )
+            if ( NotesWindow.DATA.notes.Count <= 1 )
                 {
-                NotesWindow.NOTES[ 0 ] = "";
+                NotesWindow.DATA.notes[ 0 ] = "";
                 this.textBox.Text = "";
                 this.textBox.Focus();
                 }
 
             else
                 {
-                NotesWindow.NOTES.RemoveAt( NotesWindow.CURRENT_POSITION );
+                NotesWindow.DATA.notes.RemoveAt( NotesWindow.DATA.currentPosition );
 
-                var show = NotesWindow.CURRENT_POSITION;
+                var show = NotesWindow.DATA.currentPosition;
 
-                if ( show >= NotesWindow.NOTES.Count )
+                if ( show >= NotesWindow.DATA.notes.Count )
                     {
                     show--;
                     }
@@ -90,7 +111,7 @@ namespace notes_app
 
         private void previousNoteListener( object sender, RoutedEventArgs e )
             {
-            var previousPosition = NotesWindow.CURRENT_POSITION - 1;
+            var previousPosition = NotesWindow.DATA.currentPosition - 1;
 
             if ( previousPosition < 0 )
                 {
@@ -105,9 +126,9 @@ namespace notes_app
 
         private void nextNoteListener( object sender, RoutedEventArgs e )
             {
-            var nextPosition = NotesWindow.CURRENT_POSITION + 1;
+            var nextPosition = NotesWindow.DATA.currentPosition + 1;
 
-            if ( nextPosition >= NotesWindow.NOTES.Count )
+            if ( nextPosition >= NotesWindow.DATA.notes.Count )
                 {
                 this.textBox.Focus();
                 return;
@@ -120,8 +141,8 @@ namespace notes_app
 
         private void loadNote( int position )
             {
-            NotesWindow.CURRENT_POSITION = position;
-            this.textBox.Text = NotesWindow.NOTES[ position ];
+            NotesWindow.DATA.currentPosition = position;
+            this.textBox.Text = NotesWindow.DATA.notes[ position ];
             this.textBox.Focus();
 
             this.Title = "Notes - " + (position + 1);
@@ -136,7 +157,7 @@ namespace notes_app
                 this.previous.IsEnabled = true;
                 }
 
-            if ( position + 1 == NotesWindow.NOTES.Count )
+            if ( position + 1 == NotesWindow.DATA.notes.Count )
                 {
                 this.next.IsEnabled = false;
                 }
@@ -150,7 +171,21 @@ namespace notes_app
 
         private void saveCurrentNote()
             {
-            NotesWindow.NOTES[ NotesWindow.CURRENT_POSITION ] = this.textBox.Text;
+            NotesWindow.DATA.notes[ NotesWindow.DATA.currentPosition ] = this.textBox.Text;
+            }
+
+
+        private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
+            {
+            this.saveCurrentNote();
+
+                // save to disk
+            string data = JsonConvert.SerializeObject( NotesWindow.DATA );
+
+            StreamWriter file = new StreamWriter( NotesWindow.FILE_NAME );
+
+            file.Write( data );
+            file.Close();
             }
         }
     }
