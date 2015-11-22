@@ -23,6 +23,10 @@ namespace notes_app
         public struct Data {
             public List<string> notes;
             public int currentPosition;
+            public double windowWidth;
+            public double windowHeight;
+            public double windowLeft;
+            public double windowTop;
         };
 
         static string FILE_NAME = "data.txt";
@@ -40,9 +44,29 @@ namespace notes_app
                 file.Close();
 
                 NotesWindow.DATA = JsonConvert.DeserializeObject<Data>( data );
+
+                this.Width = NotesWindow.DATA.windowWidth;
+                this.Height = NotesWindow.DATA.windowHeight;
+
+                var left = NotesWindow.DATA.windowLeft;
+
+                if ( left > SystemParameters.PrimaryScreenWidth )
+                    {
+                    left = SystemParameters.PrimaryScreenWidth - 100;
+                    }
+
+                var top = NotesWindow.DATA.windowTop;
+
+                if ( top > SystemParameters.PrimaryScreenHeight )
+                    {
+                    top = SystemParameters.PrimaryScreenHeight - 100;
+                    }
+
+                this.Left = left;
+                this.Top = top;
                 }
             
-            catch(Exception e)
+            catch( Exception )
                 {
                     // start with a single note
                 NotesWindow.DATA.notes = new List<string>();
@@ -178,6 +202,11 @@ namespace notes_app
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
             {
             this.saveCurrentNote();
+
+            NotesWindow.DATA.windowWidth = this.Width;
+            NotesWindow.DATA.windowHeight = this.Height;
+            NotesWindow.DATA.windowLeft = this.Left;
+            NotesWindow.DATA.windowTop = this.Top;
 
                 // save to disk
             string data = JsonConvert.SerializeObject( NotesWindow.DATA );

@@ -10,16 +10,46 @@
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#E1E1E1" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#505050" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DockPanel">
+            <Setter Property="Background" Value="#202020" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#293134" />
+            <Setter Property="Foreground" Value="#E1E1E1" />
+            <Setter Property="FontFamily" Value="Courier New" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
     </Window.Resources>
     <Grid>
         <DockPanel>
-            <Button x:Name="new_note" Content="New Note" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="newNoteListener" />
-            <Button x:Name="remove_note" Content="Remove Note" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Click="removeNoteListener" />
+            <Button x:Name="new_note" Content="Add" ToolTip="New Note (ctrl + n)" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Click="newNoteListener" />
+            <Button x:Name="remove_note" Content="✗" ToolTip="Remove Note (ctrl + r)" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Click="removeNoteListener" />
 
-            <Button x:Name="next" Content="▶" ToolTip="Next" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="nextNoteListener" />
-            <Button x:Name="previous" Content="◀" ToolTip="Previous" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Width="30" Height="20" Click="previousNoteListener" />
+            <Button x:Name="next" Content="▶" ToolTip="Next (ctrl + w)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="nextNoteListener" />
+            <Button x:Name="previous" Content="◀" ToolTip="Previous (ctrl + q)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="previousNoteListener" />
         </DockPanel>
-        <TextBox x:Name="textBox" Margin="0,20,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="textBox" Margin="0,30,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
     </Grid>
 </Window>
