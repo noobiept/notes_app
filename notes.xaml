@@ -1,9 +1,9 @@
-﻿<Window x:Class="notes_app.NotesWindow"
+﻿<Window x:Class="NotesApp.NotesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:notes_app"
+        xmlns:local="clr-namespace:NotesApp"
         mc:Ignorable="d"
         Closing="windowClosing"
         Title="Notes" Height="350" Width="500" MinWidth="200" MinHeight="200">

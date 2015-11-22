@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using Newtonsoft.Json;
 
 
-namespace notes_app
+namespace NotesApp
     {
     public partial class NotesWindow : Window
         {
