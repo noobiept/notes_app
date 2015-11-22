@@ -92,13 +92,20 @@ namespace notes_app
             var next = new RoutedCommand();
             next.InputGestures.Add( new KeyGesture( Key.W, ModifierKeys.Control ) );
             CommandBindings.Add( new CommandBinding( next, nextNoteListener ) );
+
+                // 'ctrl + 1' loads first note, 'ctrl + 2' loads second note, etc (from 1 to 9)
+            for (int a = 0 ; a < 9 ; a++)
+                {
+                int position = a;   // get a new variable with the value we need, to be used by the lambda function below
+                var load = new RoutedCommand();
+                load.InputGestures.Add( new KeyGesture( Key.D1 + a, ModifierKeys.Control ) );
+                CommandBindings.Add( new CommandBinding( load, ( object sender, ExecutedRoutedEventArgs e ) => this.loadNote( position ) ) );
+                }
             }
         
 
         private void newNoteListener( object sender, RoutedEventArgs e )
             {
-            this.saveCurrentNote();
-
                 // a new note is added at the end
             var position = NotesWindow.DATA.notes.Count;
             NotesWindow.DATA.notes.Add( "" );
@@ -143,7 +150,6 @@ namespace notes_app
                 return;
                 }
 
-            this.saveCurrentNote();
             this.loadNote( previousPosition );
             }
 
@@ -158,13 +164,17 @@ namespace notes_app
                 return;
                 }
 
-            this.saveCurrentNote();
             this.loadNote( nextPosition );
             }
 
 
         private void loadNote( int position )
             {
+            if ( position >= NotesWindow.DATA.notes.Count )
+                {
+                position = NotesWindow.DATA.notes.Count - 1;
+                }
+
             NotesWindow.DATA.currentPosition = position;
             this.textBox.Text = NotesWindow.DATA.notes[ position ];
             this.textBox.Focus();
@@ -193,16 +203,15 @@ namespace notes_app
             }
 
 
-        private void saveCurrentNote()
+        private void textChanged( object sender, TextChangedEventArgs e )
             {
+                // save the current note when there's a change
             NotesWindow.DATA.notes[ NotesWindow.DATA.currentPosition ] = this.textBox.Text;
             }
 
 
-        private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
+        private void windowClosing( object sender, System.ComponentModel.CancelEventArgs e )
             {
-            this.saveCurrentNote();
-
             NotesWindow.DATA.windowWidth = this.Width;
             NotesWindow.DATA.windowHeight = this.Height;
             NotesWindow.DATA.windowLeft = this.Left;

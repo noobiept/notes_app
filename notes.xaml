@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:notes_app"
         mc:Ignorable="d"
-        Closing="Window_Closing"
+        Closing="windowClosing"
         Title="Notes" Height="350" Width="500" MinWidth="200" MinHeight="200">
     <Window.Resources>
         <Style TargetType="Button">
@@ -50,6 +50,6 @@
             <Button x:Name="next" Content="▶" ToolTip="Next (ctrl + w)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="nextNoteListener" />
             <Button x:Name="previous" Content="◀" ToolTip="Previous (ctrl + q)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="previousNoteListener" />
         </DockPanel>
-        <TextBox x:Name="textBox" Margin="0,30,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+        <TextBox x:Name="textBox" Margin="0,30,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextChanged="textChanged" />
     </Grid>
 </Window>
