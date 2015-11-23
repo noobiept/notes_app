@@ -22,12 +22,13 @@ namespace NotesApp
         {
         public struct Data {
             public List<string> notes;
-            public int currentPosition;
+            public int currentPosition; // position in the notes list, of the current opened note
             public double windowWidth;
             public double windowHeight;
             public double windowLeft;
             public double windowTop;
-        };
+            public int version;         // version of the data structure (useful when updating from different versions that have incompatible changes)
+            };
 
         static string FILE_NAME = "data.txt";
         static public Data DATA;
@@ -110,10 +111,15 @@ namespace NotesApp
                 // system tray icon
             var contextMenu = new System.Windows.Forms.ContextMenu();
 
+            var show = new System.Windows.Forms.MenuItem();
+            show.Text = "Show";
+            show.Click += (object sender, EventArgs e) => { this.showWindow(); };
+
             var close = new System.Windows.Forms.MenuItem();
             close.Text = "Close";
             close.Click += (object sender, EventArgs e) => { this.closeWindow(); };
 
+            contextMenu.MenuItems.Add( show );
             contextMenu.MenuItems.Add( close );
 
             this.notifyIcon = new System.Windows.Forms.NotifyIcon();
@@ -237,6 +243,7 @@ namespace NotesApp
             NotesWindow.DATA.windowHeight = this.Height;
             NotesWindow.DATA.windowLeft = this.Left;
             NotesWindow.DATA.windowTop = this.Top;
+            NotesWindow.DATA.version = 1;
 
             string data = JsonConvert.SerializeObject( NotesWindow.DATA );
 
@@ -250,6 +257,19 @@ namespace NotesApp
         private void windowClosing( object sender, System.ComponentModel.CancelEventArgs e )
             {
             e.Cancel = true;
+            this.hideWindow();
+            }
+
+
+        private void showWindow()
+            {
+            this.isHidden = false;
+            this.Show();
+            }
+
+
+        private void hideWindow()
+            {
             this.isHidden = true;
             this.Hide();
             }
@@ -259,14 +279,12 @@ namespace NotesApp
             {
             if ( this.isHidden == false )
                 {
-                this.isHidden = true;
-                this.Hide();
+                this.hideWindow();
                 }
 
             else
                 {
-                this.isHidden = false;
-                this.Show();
+                this.showWindow();
                 }
             }
             
