@@ -30,13 +30,18 @@ namespace NotesApp
         };
 
         static string FILE_NAME = "data.txt";
-        static public Data DATA;        
+        static public Data DATA;
+
+        System.Windows.Forms.NotifyIcon notifyIcon;
+        bool isHidden;
 
 
         public NotesWindow()
             {
             InitializeComponent();
-            
+
+            this.isHidden = false;
+
             try {
                 StreamReader file = new StreamReader( NotesWindow.FILE_NAME );
 
@@ -101,6 +106,22 @@ namespace NotesApp
                 load.InputGestures.Add( new KeyGesture( Key.D1 + a, ModifierKeys.Control ) );
                 CommandBindings.Add( new CommandBinding( load, ( object sender, ExecutedRoutedEventArgs e ) => this.loadNote( position ) ) );
                 }
+
+                // system tray icon
+            var contextMenu = new System.Windows.Forms.ContextMenu();
+
+            var close = new System.Windows.Forms.MenuItem();
+            close.Text = "Close";
+            close.Click += (object sender, EventArgs e) => { this.closeWindow(); };
+
+            contextMenu.MenuItems.Add( close );
+
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon();
+            this.notifyIcon.Text = "Notes App";
+            this.notifyIcon.Icon = new System.Drawing.Icon( @"assets/icon.ico" );
+            this.notifyIcon.DoubleClick += this.notifyIconClick;
+            this.notifyIcon.ContextMenu = contextMenu;
+            this.notifyIcon.Visible = true;
             }
         
 
@@ -210,20 +231,50 @@ namespace NotesApp
             }
 
 
-        private void windowClosing( object sender, System.ComponentModel.CancelEventArgs e )
+        private void saveToDisk()
             {
             NotesWindow.DATA.windowWidth = this.Width;
             NotesWindow.DATA.windowHeight = this.Height;
             NotesWindow.DATA.windowLeft = this.Left;
             NotesWindow.DATA.windowTop = this.Top;
 
-                // save to disk
             string data = JsonConvert.SerializeObject( NotesWindow.DATA );
 
             StreamWriter file = new StreamWriter( NotesWindow.FILE_NAME );
 
             file.Write( data );
             file.Close();
+            }
+
+
+        private void windowClosing( object sender, System.ComponentModel.CancelEventArgs e )
+            {
+            e.Cancel = true;
+            this.isHidden = true;
+            this.Hide();
+            }
+
+
+        private void notifyIconClick(object sender, EventArgs e)
+            {
+            if ( this.isHidden == false )
+                {
+                this.isHidden = true;
+                this.Hide();
+                }
+
+            else
+                {
+                this.isHidden = false;
+                this.Show();
+                }
+            }
+            
+        private void closeWindow()
+            {
+            this.saveToDisk();
+            this.notifyIcon.Visible = false;
+            Application.Current.Shutdown();
             }
         }
     }
