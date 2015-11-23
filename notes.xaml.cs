@@ -109,11 +109,20 @@ namespace NotesApp
                 int position = a;   // get a new variable with the value we need, to be used by the lambda function below
                 var load = new RoutedCommand();
                 load.InputGestures.Add( new KeyGesture( Key.D1 + a, ModifierKeys.Control ) );
-                CommandBindings.Add( new CommandBinding( load, ( object sender, ExecutedRoutedEventArgs e ) => this.loadNote( position ) ) );
+                CommandBindings.Add( new CommandBinding( load, (object sender, ExecutedRoutedEventArgs e) => this.loadNote( position ) ) );
                 }
+                
+            var hide = new RoutedCommand();
+            hide.InputGestures.Add( new KeyGesture( Key.Escape ) );
+            CommandBindings.Add( new CommandBinding( hide, (object sender, ExecutedRoutedEventArgs e) => { this.hideWindow(); } ) );
+
 
                 // system tray icon
             var contextMenu = new System.Windows.Forms.ContextMenu();
+
+            var about = new System.Windows.Forms.MenuItem();
+            about.Text = "About";
+            about.Click += (object sender, EventArgs e) => { System.Diagnostics.Process.Start( "https://bitbucket.org/drk4/notes_app" ); };
 
             var show = new System.Windows.Forms.MenuItem();
             show.Text = "Show";
@@ -123,6 +132,7 @@ namespace NotesApp
             close.Text = "Close";
             close.Click += (object sender, EventArgs e) => { this.closeWindow(); };
 
+            contextMenu.MenuItems.Add( about );
             contextMenu.MenuItems.Add( show );
             contextMenu.MenuItems.Add( close );
 
