@@ -20,7 +20,7 @@ namespace NotesApp
     {
     public partial class NotesWindow : Window
         {
-        public struct Data {
+        struct Data {
             public List<string> notes;
             public int currentPosition; // position in the notes list, of the current opened note
             public double windowWidth;
@@ -28,20 +28,18 @@ namespace NotesApp
             public double windowLeft;
             public double windowTop;
             public int version;         // version of the data structure (useful when updating from different versions that have incompatible changes)
+            public bool isHidden;
             };
 
         static string FILE_NAME = "data.txt";
-        static public Data DATA;
-
+        
+        Data data;
         System.Windows.Forms.NotifyIcon notifyIcon;
-        bool isHidden;
-
+        
 
         public NotesWindow()
             {
             InitializeComponent();
-
-            this.isHidden = false;
 
             try {
                 StreamReader file = new StreamReader( NotesWindow.FILE_NAME );
@@ -49,19 +47,19 @@ namespace NotesApp
                 string data = file.ReadToEnd();
                 file.Close();
 
-                NotesWindow.DATA = JsonConvert.DeserializeObject<Data>( data );
+                this.data = JsonConvert.DeserializeObject<Data>( data );
 
-                this.Width = NotesWindow.DATA.windowWidth;
-                this.Height = NotesWindow.DATA.windowHeight;
+                this.Width = this.data.windowWidth;
+                this.Height = this.data.windowHeight;
 
-                var left = NotesWindow.DATA.windowLeft;
+                var left = this.data.windowLeft;
 
                 if ( left > SystemParameters.PrimaryScreenWidth )
                     {
                     left = SystemParameters.PrimaryScreenWidth - 100;
                     }
 
-                var top = NotesWindow.DATA.windowTop;
+                var top = this.data.windowTop;
 
                 if ( top > SystemParameters.PrimaryScreenHeight )
                     {
@@ -70,17 +68,23 @@ namespace NotesApp
 
                 this.Left = left;
                 this.Top = top;
+
+                if ( this.data.isHidden == true )
+                    {
+                    this.hideWindow();
+                    }
                 }
             
             catch( Exception )
                 {
                     // start with a single note
-                NotesWindow.DATA.notes = new List<string>();
-                NotesWindow.DATA.notes.Add( "" );
-                NotesWindow.DATA.currentPosition = 0;
+                this.data.notes = new List<string>();
+                this.data.notes.Add( "" );
+                this.data.currentPosition = 0;
+                this.data.isHidden = false;
                 }
 
-            this.loadNote( NotesWindow.DATA.currentPosition );
+            this.loadNote( this.data.currentPosition );
 
                 // keyboard shortcuts
             var newNote = new RoutedCommand();
@@ -134,8 +138,8 @@ namespace NotesApp
         private void newNoteListener( object sender, RoutedEventArgs e )
             {
                 // a new note is added at the end
-            var position = NotesWindow.DATA.notes.Count;
-            NotesWindow.DATA.notes.Add( "" );
+            var position = this.data.notes.Count;
+            this.data.notes.Add( "" );
 
             this.loadNote( position );
             }
@@ -144,20 +148,20 @@ namespace NotesApp
         private void removeNoteListener( object sender, RoutedEventArgs e )
             {
                 // when there's only 1 note, don't remove it, clear it instead
-            if ( NotesWindow.DATA.notes.Count <= 1 )
+            if ( this.data.notes.Count <= 1 )
                 {
-                NotesWindow.DATA.notes[ 0 ] = "";
+                this.data.notes[ 0 ] = "";
                 this.textBox.Text = "";
                 this.textBox.Focus();
                 }
 
             else
                 {
-                NotesWindow.DATA.notes.RemoveAt( NotesWindow.DATA.currentPosition );
+                this.data.notes.RemoveAt( this.data.currentPosition );
 
-                var show = NotesWindow.DATA.currentPosition;
+                var show = this.data.currentPosition;
 
-                if ( show >= NotesWindow.DATA.notes.Count )
+                if ( show >= this.data.notes.Count )
                     {
                     show--;
                     }
@@ -169,7 +173,7 @@ namespace NotesApp
 
         private void previousNoteListener( object sender, RoutedEventArgs e )
             {
-            var previousPosition = NotesWindow.DATA.currentPosition - 1;
+            var previousPosition = this.data.currentPosition - 1;
 
             if ( previousPosition < 0 )
                 {
@@ -183,9 +187,9 @@ namespace NotesApp
 
         private void nextNoteListener( object sender, RoutedEventArgs e )
             {
-            var nextPosition = NotesWindow.DATA.currentPosition + 1;
+            var nextPosition = this.data.currentPosition + 1;
 
-            if ( nextPosition >= NotesWindow.DATA.notes.Count )
+            if ( nextPosition >= this.data.notes.Count )
                 {
                 this.textBox.Focus();
                 return;
@@ -197,13 +201,13 @@ namespace NotesApp
 
         private void loadNote( int position )
             {
-            if ( position >= NotesWindow.DATA.notes.Count )
+            if ( position >= this.data.notes.Count )
                 {
-                position = NotesWindow.DATA.notes.Count - 1;
+                position = this.data.notes.Count - 1;
                 }
 
-            NotesWindow.DATA.currentPosition = position;
-            this.textBox.Text = NotesWindow.DATA.notes[ position ];
+            this.data.currentPosition = position;
+            this.textBox.Text = this.data.notes[ position ];
             this.textBox.Focus();
 
             this.Title = "Notes - " + (position + 1);
@@ -218,7 +222,7 @@ namespace NotesApp
                 this.previous.IsEnabled = true;
                 }
 
-            if ( position + 1 == NotesWindow.DATA.notes.Count )
+            if ( position + 1 == this.data.notes.Count )
                 {
                 this.next.IsEnabled = false;
                 }
@@ -233,19 +237,19 @@ namespace NotesApp
         private void textChanged( object sender, TextChangedEventArgs e )
             {
                 // save the current note when there's a change
-            NotesWindow.DATA.notes[ NotesWindow.DATA.currentPosition ] = this.textBox.Text;
+            this.data.notes[ this.data.currentPosition ] = this.textBox.Text;
             }
 
 
         private void saveToDisk()
             {
-            NotesWindow.DATA.windowWidth = this.Width;
-            NotesWindow.DATA.windowHeight = this.Height;
-            NotesWindow.DATA.windowLeft = this.Left;
-            NotesWindow.DATA.windowTop = this.Top;
-            NotesWindow.DATA.version = 1;
+            this.data.windowWidth = this.Width;
+            this.data.windowHeight = this.Height;
+            this.data.windowLeft = this.Left;
+            this.data.windowTop = this.Top;
+            this.data.version = 1;
 
-            string data = JsonConvert.SerializeObject( NotesWindow.DATA );
+            string data = JsonConvert.SerializeObject( this.data );
 
             StreamWriter file = new StreamWriter( NotesWindow.FILE_NAME );
 
@@ -263,21 +267,21 @@ namespace NotesApp
 
         private void showWindow()
             {
-            this.isHidden = false;
+            this.data.isHidden = false;
             this.Show();
             }
 
 
         private void hideWindow()
             {
-            this.isHidden = true;
+            this.data.isHidden = true;
             this.Hide();
             }
 
 
         private void notifyIconClick(object sender, EventArgs e)
             {
-            if ( this.isHidden == false )
+            if ( this.data.isHidden == false )
                 {
                 this.hideWindow();
                 }
