@@ -22,7 +22,7 @@ namespace NotesApp
             public bool isHidden;
             };
 
-        static string FILE_NAME = "data.txt";
+        static string DATA_PATH = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "notes_app", "data.txt" );
         
         Data data;
         System.Windows.Forms.NotifyIcon notifyIcon;
@@ -33,7 +33,7 @@ namespace NotesApp
             InitializeComponent();
 
             try {
-                StreamReader file = new StreamReader( NotesWindow.FILE_NAME );
+                StreamReader file = new StreamReader( NotesWindow.DATA_PATH );
 
                 string data = file.ReadToEnd();
                 file.Close();
@@ -252,7 +252,9 @@ namespace NotesApp
 
             string data = JsonConvert.SerializeObject( this.data );
 
-            StreamWriter file = new StreamWriter( NotesWindow.FILE_NAME );
+                // make sure there's a directory created (otherwise the stream writer call will fail)
+            System.IO.Directory.CreateDirectory( Path.GetDirectoryName( NotesWindow.DATA_PATH ) );
+            StreamWriter file = new StreamWriter( NotesWindow.DATA_PATH );
 
             file.Write( data );
             file.Close();
