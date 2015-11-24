@@ -242,7 +242,7 @@ namespace NotesApp
             }
 
 
-        private void saveToDisk()
+        public void saveToDisk()
             {
             this.data.windowWidth = this.Width;
             this.data.windowHeight = this.Height;
