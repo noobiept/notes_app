@@ -50,6 +50,6 @@
             <Button x:Name="next" Content="▶" ToolTip="Next (ctrl + w)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="nextNoteListener" />
             <Button x:Name="previous" Content="◀" ToolTip="Previous (ctrl + q)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="previousNoteListener" />
         </DockPanel>
-        <TextBox x:Name="textBox" Margin="0,30,0,0" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextChanged="textChanged" />
+        <TextBox x:Name="textBox" Margin="0,30,0,0" Padding="5" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextChanged="textChanged" />
     </Grid>
 </Window>

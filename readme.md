@@ -1,10 +1,15 @@
-﻿Clicking on the window's 'X' button hides the window (instead of closing it).
+﻿Description
+===========
 
-Double-click on the system tray icon to show/hide the application.
+Basic notes application, you can add multiple notes and minimize the application to the system tray.
 
-To close the application, you need to right click on the system tray icon, and click on the 'close' button.
+- Clicking on the window's 'X' button hides the window (instead of closing it).
+- Double-click on the system tray icon to show/hide the application.
+- To close the application, you need to right click on the system tray icon, and click on the 'close' button.
+- To have the application start on windows startup, just add a shortcut to the 'Startup' folder (start -> all programs -> find 'Startup' folder).
 
-To have the application start on windows startup, just add a shortcut to the 'Startup' folder (start -> all programs -> find 'Startup' folder).
+
+![example](assets/example.png)
 
 
 
