@@ -22,7 +22,12 @@ namespace NotesApp
             public bool isHidden;
             };
 
-        static string DATA_PATH = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "notes_app", "data.txt" );
+        #if DEBUG
+            static string FILE_NAME = "data_debug.txt";
+        #else
+            static string FILE_NAME = "data.txt";
+        #endif        
+        static string DATA_PATH = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "notes_app",  NotesWindow.FILE_NAME );
         
         Data data;
         System.Windows.Forms.NotifyIcon notifyIcon;
@@ -272,6 +277,7 @@ namespace NotesApp
             {
             this.data.isHidden = false;
             this.Show();
+            this.Activate();
             }
 
 
