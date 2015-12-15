@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -32,7 +33,7 @@ namespace NotesApp
             {
             try
                 {
-                StreamReader file = new StreamReader( Data.DATA_PATH );
+                StreamReader file = new StreamReader( Data.DATA_PATH, Encoding.UTF8 );
 
                 string jsonData = file.ReadToEnd();
                 file.Close();
@@ -89,7 +90,7 @@ namespace NotesApp
 
                 // make sure there's a directory created (otherwise the stream writer call will fail)
             System.IO.Directory.CreateDirectory( Path.GetDirectoryName( Data.DATA_PATH ) );
-            StreamWriter file = new StreamWriter( Data.DATA_PATH );
+            StreamWriter file = new StreamWriter( Data.DATA_PATH, false, Encoding.UTF8 );
 
             file.Write( dataJson );
             file.Close();
