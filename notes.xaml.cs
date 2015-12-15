@@ -126,7 +126,7 @@ namespace NotesApp
 
             var close = new System.Windows.Forms.MenuItem();
             close.Text = "Close";
-            close.Click += (object sender, EventArgs e) => { this.closeWindow(); };
+            close.Click += this.closeWindowListener;
 
             contextMenu.MenuItems.Add( about );
             contextMenu.MenuItems.Add( show );
@@ -202,6 +202,24 @@ namespace NotesApp
                 }
 
             this.loadNote( nextPosition );
+            }
+
+
+        private void closeWindowListener( object sender, EventArgs e )
+            {
+            this.closeWindow();
+            }
+
+
+        private void alwaysOnTopListener( object sender, EventArgs e )
+            {
+            this.setAlwaysOnTop( !this.Topmost );
+            }
+
+
+        private void setAlwaysOnTop( bool value )
+            {
+            this.Topmost = value;
             }
 
 
