@@ -1,16 +1,13 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Newtonsoft.Json;
 
 
 namespace NotesApp
     {
     public partial class NotesWindow : Window
-        {      
+        {
         Data data;
         System.Windows.Forms.NotifyIcon notifyIcon;
         
@@ -56,6 +53,11 @@ namespace NotesApp
             if ( this.data.isHidden == true )
                 {
                 this.hideWindow();
+                }
+
+            if ( this.data.alwaysOnTop == true )
+                {
+                this.setAlwaysOnTop( true );
                 }
 
 
@@ -184,6 +186,8 @@ namespace NotesApp
         private void setAlwaysOnTop( bool value )
             {
             this.Topmost = value;
+            this.data.alwaysOnTop = value;
+            this.AlwaysOnTopItem.IsChecked = value;
             }
 
 

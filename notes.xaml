@@ -58,7 +58,7 @@
     <Grid>
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Always On _Top" IsCheckable="True" Click="alwaysOnTopListener" />
+                <MenuItem Name="AlwaysOnTopItem" Header="Always On _Top" IsCheckable="True" Click="alwaysOnTopListener" />
                 <MenuItem Header="_Close" Click="closeWindowListener" />
             </ContextMenu>
         </Grid.ContextMenu>

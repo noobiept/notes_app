@@ -15,7 +15,7 @@ namespace NotesApp
         #endif
         static string DATA_PATH = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "notes_app", Data.FILE_NAME );
 
-        const int APP_VERSION = 1;  // current version of the application data
+        const int DATA_VERSION = 2;  // current version of the application data
 
         public List<string> notes;
         public int currentPosition; // position in the notes list, of the current opened note
@@ -25,6 +25,7 @@ namespace NotesApp
         public double windowTop;
         public int version;         // version of the loaded data structure (useful to compare with the application version, when updating from different versions that have incompatible changes)
         public bool isHidden;
+        public bool alwaysOnTop;
 
 
         static public void load( out Data data )
@@ -38,7 +39,7 @@ namespace NotesApp
 
                 data = JsonConvert.DeserializeObject<Data>( jsonData );
 
-                if ( data.version != Data.APP_VERSION )
+                if ( data.version != Data.DATA_VERSION )
                     {
                     Data.update( ref data );
                     }
@@ -62,8 +63,9 @@ namespace NotesApp
             data.windowHeight = -1;
             data.windowLeft = -1;
             data.windowTop = -1;
-            data.version = Data.APP_VERSION;
+            data.version = Data.DATA_VERSION;
             data.isHidden = false;
+            data.alwaysOnTop = false;
             }
 
 
@@ -72,7 +74,12 @@ namespace NotesApp
          */
         public static void update( ref Data data )
             {
-                //HERE
+                // update to v2
+            if ( data.version == 1 )
+                {
+                data.alwaysOnTop = false;
+                data.version = 2;
+                }
             }
 
 
