@@ -153,26 +153,11 @@ namespace NotesApp
 
         private void removeNoteListener( object sender, RoutedEventArgs e )
             {
-                // when there's only 1 note, don't remove it, clear it instead
-            if ( this.data.notes.Count <= 1 )
+            var result = MessageBox.Show( "Do you want to remove this note?", String.Format( "Remove \"{0}\"?", this.Title ), MessageBoxButton.OKCancel );
+
+            if ( result == MessageBoxResult.OK )
                 {
-                this.data.notes[ 0 ] = "";
-                this.textBox.Text = "";
-                this.textBox.Focus();
-                }
-
-            else
-                {
-                this.data.notes.RemoveAt( this.data.currentPosition );
-
-                var show = this.data.currentPosition;
-
-                if ( show >= this.data.notes.Count )
-                    {
-                    show--;
-                    }
-
-                this.loadNote( show );
+                this.removeCurrentNote();
                 }
             }
 
@@ -223,6 +208,32 @@ namespace NotesApp
             }
 
 
+        private void removeCurrentNote()
+            {
+                // when there's only 1 note, don't remove it, clear it instead
+            if ( this.data.notes.Count <= 1 )
+                {
+                this.data.notes[ 0 ] = "";
+                this.textBox.Text = "";
+                this.textBox.Focus();
+                }
+
+            else
+                {
+                this.data.notes.RemoveAt( this.data.currentPosition );
+
+                var show = this.data.currentPosition;
+
+                if ( show >= this.data.notes.Count )
+                    {
+                    show--;
+                    }
+
+                this.loadNote( show );
+                }
+            }
+
+
         private void loadNote( int position )
             {
             if ( position >= this.data.notes.Count )
@@ -234,7 +245,7 @@ namespace NotesApp
             this.textBox.Text = this.data.notes[ position ];
             this.textBox.Focus();
 
-            this.Title = "Notes - " + (position + 1);
+            this.Title = String.Format( "Notes - {0}", position + 1 );
 
             if ( position == 0 )
                 {
