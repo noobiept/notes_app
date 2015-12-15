@@ -83,6 +83,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="data.cs" />
     <Compile Include="notes.xaml.cs">
       <DependentUpon>notes.xaml</DependentUpon>
       <SubType>Code</SubType>

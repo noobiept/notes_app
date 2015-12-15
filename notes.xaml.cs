@@ -10,25 +10,7 @@ using Newtonsoft.Json;
 namespace NotesApp
     {
     public partial class NotesWindow : Window
-        {
-        struct Data {
-            public List<string> notes;
-            public int currentPosition; // position in the notes list, of the current opened note
-            public double windowWidth;
-            public double windowHeight;
-            public double windowLeft;
-            public double windowTop;
-            public int version;         // version of the data structure (useful when updating from different versions that have incompatible changes)
-            public bool isHidden;
-            };
-
-        #if DEBUG
-            static string FILE_NAME = "data_debug.txt";
-        #else
-            static string FILE_NAME = "data.txt";
-        #endif        
-        static string DATA_PATH = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "notes_app",  NotesWindow.FILE_NAME );
-        
+        {      
         Data data;
         System.Windows.Forms.NotifyIcon notifyIcon;
         
@@ -37,48 +19,45 @@ namespace NotesApp
             {
             InitializeComponent();
 
-            try {
-                StreamReader file = new StreamReader( NotesWindow.DATA_PATH );
+            Data.load( out this.data );
 
-                string data = file.ReadToEnd();
-                file.Close();
-
-                this.data = JsonConvert.DeserializeObject<Data>( data );
-
+            if ( this.data.windowWidth > 0 )
+                {
                 this.Width = this.data.windowWidth;
+                }
+
+            if ( this.data.windowHeight > 0 )
+                {
                 this.Height = this.data.windowHeight;
-
-                var left = this.data.windowLeft;
-
-                if ( left > SystemParameters.PrimaryScreenWidth )
+                }
+            
+            var left = this.data.windowLeft;
+            if ( left > 0 )
+                {
+                if (left > SystemParameters.PrimaryScreenWidth)
                     {
                     left = SystemParameters.PrimaryScreenWidth - 100;
                     }
 
-                var top = this.data.windowTop;
+                this.Left = left;
+                }
 
-                if ( top > SystemParameters.PrimaryScreenHeight )
+            var top = this.data.windowTop;
+            if ( top > 0 )
+                {
+                if (top > SystemParameters.PrimaryScreenHeight)
                     {
                     top = SystemParameters.PrimaryScreenHeight - 100;
                     }
 
-                this.Left = left;
                 this.Top = top;
+                }
 
-                if ( this.data.isHidden == true )
-                    {
-                    this.hideWindow();
-                    }
-                }
-            
-            catch( Exception )
+            if ( this.data.isHidden == true )
                 {
-                    // start with a single note
-                this.data.notes = new List<string>();
-                this.data.notes.Add( "" );
-                this.data.currentPosition = 0;
-                this.data.isHidden = false;
+                this.hideWindow();
                 }
+
 
             this.loadNote( this.data.currentPosition );
 
@@ -282,16 +261,8 @@ namespace NotesApp
             this.data.windowHeight = this.Height;
             this.data.windowLeft = this.Left;
             this.data.windowTop = this.Top;
-            this.data.version = 1;
 
-            string data = JsonConvert.SerializeObject( this.data );
-
-                // make sure there's a directory created (otherwise the stream writer call will fail)
-            System.IO.Directory.CreateDirectory( Path.GetDirectoryName( NotesWindow.DATA_PATH ) );
-            StreamWriter file = new StreamWriter( NotesWindow.DATA_PATH );
-
-            file.Write( data );
-            file.Close();
+            Data.save( ref this.data );
             }
 
 
