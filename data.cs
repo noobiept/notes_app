@@ -9,11 +9,11 @@ namespace NotesApp
     {
     public struct Data
         {
-        #if DEBUG
-            const string FILE_NAME = "data_debug.txt";
-        #else
+#if DEBUG
+        const string FILE_NAME = "data_debug.txt";
+#else
             const string FILE_NAME = "data.txt";
-        #endif
+#endif
         static string DATA_PATH = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "notes_app", Data.FILE_NAME );
 
         const int DATA_VERSION = 2;  // current version of the application data
@@ -40,7 +40,7 @@ namespace NotesApp
 
                 data = JsonConvert.DeserializeObject<Data>( jsonData );
 
-                if ( data.version != Data.DATA_VERSION )
+                if( data.version != Data.DATA_VERSION )
                     {
                     Data.update( ref data );
                     }
@@ -75,8 +75,8 @@ namespace NotesApp
          */
         public static void update( ref Data data )
             {
-                // update to v2
-            if ( data.version == 1 )
+            // update to v2
+            if( data.version == 1 )
                 {
                 data.alwaysOnTop = false;
                 data.version = 2;
@@ -88,7 +88,7 @@ namespace NotesApp
             {
             string dataJson = JsonConvert.SerializeObject( data );
 
-                // make sure there's a directory created (otherwise the stream writer call will fail)
+            // make sure there's a directory created (otherwise the stream writer call will fail)
             System.IO.Directory.CreateDirectory( Path.GetDirectoryName( Data.DATA_PATH ) );
             StreamWriter file = new StreamWriter( Data.DATA_PATH, false, Encoding.UTF8 );
 
