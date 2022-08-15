@@ -95,29 +95,29 @@ namespace NotesApp
 
 
             // system tray icon
-            var contextMenu = new System.Windows.Forms.ContextMenu();
+            var contextMenu = new System.Windows.Forms.ContextMenuStrip();
 
-            var about = new System.Windows.Forms.MenuItem();
+            var about = new System.Windows.Forms.ToolStripMenuItem();
             about.Text = "About";
             about.Click += ( object sender, EventArgs e ) => { System.Diagnostics.Process.Start( "https://bitbucket.org/drk4/notes_app" ); };
 
-            var show = new System.Windows.Forms.MenuItem();
+            var show = new System.Windows.Forms.ToolStripMenuItem();
             show.Text = "Show";
             show.Click += ( object sender, EventArgs e ) => { this.showWindow(); };
 
-            var close = new System.Windows.Forms.MenuItem();
+            var close = new System.Windows.Forms.ToolStripMenuItem();
             close.Text = "Close";
             close.Click += this.closeWindowListener;
 
-            contextMenu.MenuItems.Add( about );
-            contextMenu.MenuItems.Add( show );
-            contextMenu.MenuItems.Add( close );
+            contextMenu.Items.Add( about );
+            contextMenu.Items.Add( show );
+            contextMenu.Items.Add( close );
 
             this.notifyIcon = new System.Windows.Forms.NotifyIcon();
             this.notifyIcon.Text = "Notes App";
             this.notifyIcon.Icon = new System.Drawing.Icon( @"assets/icon.ico" );
             this.notifyIcon.DoubleClick += this.notifyIconClick;
-            this.notifyIcon.ContextMenu = contextMenu;
+            this.notifyIcon.ContextMenuStrip = contextMenu;
             this.notifyIcon.Visible = true;
             }
 

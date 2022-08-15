@@ -2,6 +2,7 @@
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 
 // General Information about an assembly is controlled through the following 
@@ -12,9 +13,10 @@ using System.Windows;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
 [assembly: AssemblyProduct( "notes_app" )]
-[assembly: AssemblyCopyright( "Copyright ©  2015" )]
+[assembly: AssemblyCopyright( "Copyright ©  2022" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
+[assembly: SupportedOSPlatform("windows")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
