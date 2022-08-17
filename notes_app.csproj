@@ -26,6 +26,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ApplicationDefinition Include="source\App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="assets\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
