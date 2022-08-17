@@ -99,7 +99,10 @@ namespace NotesApp
 
             var about = new System.Windows.Forms.ToolStripMenuItem();
             about.Text = "About";
-            about.Click += ( object sender, EventArgs e ) => { System.Diagnostics.Process.Start( "https://bitbucket.org/drk4/notes_app" ); };
+            about.Click += (object sender, EventArgs e) =>
+            {
+                Utilities.openExternalUrl(Constants.aboutUrl);
+            };
 
             var show = new System.Windows.Forms.ToolStripMenuItem();
             show.Text = "Show";
