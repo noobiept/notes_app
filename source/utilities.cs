@@ -8,11 +8,7 @@ namespace NotesApp
         static public void openExternalUrl(String url)
         {
             System.Diagnostics.Process.Start(
-                new ProcessStartInfo
-                {
-                    FileName = url,
-                    UseShellExecute = true,
-                }
+                new ProcessStartInfo { FileName = url, UseShellExecute = true, }
             );
         }
     }

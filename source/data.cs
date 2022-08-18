@@ -4,7 +4,6 @@ using System.Text;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-
 namespace NotesApp
 {
     public struct Data
@@ -12,11 +11,15 @@ namespace NotesApp
 #if DEBUG
         const string FILE_NAME = "data_debug.txt";
 #else
-            const string FILE_NAME = "data.txt";
+        const string FILE_NAME = "data.txt";
 #endif
-        static string DATA_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "notes_app", FILE_NAME);
+        static string DATA_PATH = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "notes_app",
+            FILE_NAME
+        );
 
-        const int DATA_VERSION = 2;  // current version of the application data
+        const int DATA_VERSION = 2; // current version of the application data
 
         public List<string> notes;
         public int currentPosition; // position in the notes list, of the current opened note
@@ -24,10 +27,9 @@ namespace NotesApp
         public double windowHeight;
         public double windowLeft;
         public double windowTop;
-        public int version;         // version of the loaded data structure (useful to compare with the application version, when updating from different versions that have incompatible changes)
+        public int version; // version of the loaded data structure (useful to compare with the application version, when updating from different versions that have incompatible changes)
         public bool isHidden;
         public bool alwaysOnTop;
-
 
         static public void load(out Data data)
         {
@@ -45,13 +47,11 @@ namespace NotesApp
                     update(ref data);
                 }
             }
-
             catch (Exception)
             {
                 loadDefaults(out data);
             }
         }
-
 
         static public void loadDefaults(out Data data)
         {
@@ -69,7 +69,6 @@ namespace NotesApp
             data.alwaysOnTop = false;
         }
 
-
         /**
          * Update the data from a previous version.
          */
@@ -82,7 +81,6 @@ namespace NotesApp
                 data.version = 2;
             }
         }
-
 
         public static void save(ref Data data)
         {

@@ -1,0 +1,6 @@
+﻿/Properties/**
+/packages/**
+/.vs/**
+/assets/**
+/bin/**
+/obj/**
