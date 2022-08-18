@@ -49,4 +49,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".github\workflows\build.yml" />
+  </ItemGroup>
 </Project>
