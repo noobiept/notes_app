@@ -1,0 +1,30 @@
+﻿name: notes
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+ 
+      - run: dotnet restore
+      - run: dotnet tool restore
+
+      - name: Check code format
+        run: dotnet tool run dotnet-csharpier ./ --check
+
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
