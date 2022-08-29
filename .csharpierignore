@@ -1,6 +1,7 @@
-﻿./Properties/**
-./packages/**
-./.vs/**
-./assets/**
-./bin/**
-./obj/**
+﻿/Properties/**
+/packages/**
+/.vs/**
+/assets/**
+/bin/**
+/obj/**
+/Migrations/**

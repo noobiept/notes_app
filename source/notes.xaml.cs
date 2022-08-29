@@ -198,6 +198,11 @@ namespace NotesApp
             return this.db.Config.First();
         }
 
+        private Note getNoteAt(int position)
+        {
+            return this.db.Notes.ToList().ElementAt(position);
+        }
+
         private void closeWindowListener(object sender, EventArgs e)
         {
             this.closeWindow();
@@ -231,7 +236,9 @@ namespace NotesApp
             }
             else
             {
-                var note = this.db.Notes.ElementAt(config.CurrentNotePosition);
+                var note = this.getNoteAt(config.CurrentNotePosition);
+                this.db.Notes.Remove(note);
+
                 var show = config.CurrentNotePosition;
 
                 if (show >= this.db.Notes.Count())
@@ -241,6 +248,8 @@ namespace NotesApp
 
                 this.loadNote(show);
             }
+
+            this.db.SaveChanges();
         }
 
         private void loadNote(int position)
@@ -253,7 +262,7 @@ namespace NotesApp
                 position = count - 1;
             }
 
-            var note = this.db.Notes.ToList().ElementAt(position);
+            var note = this.getNoteAt(position);
 
             config.CurrentNotePosition = position;
 
@@ -284,7 +293,7 @@ namespace NotesApp
         private void textChanged(object sender, TextChangedEventArgs e)
         {
             var config = this.getConfig();
-            var note = this.db.Notes.ElementAt(config.CurrentNotePosition);
+            var note = this.getNoteAt(config.CurrentNotePosition);
 
             // save the current note when there's a change
             note.Content = this.textBox.Text;
