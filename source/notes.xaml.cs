@@ -2,31 +2,37 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using NotesApp.Models;
 
 namespace NotesApp
 {
     public partial class NotesWindow : Window
     {
-        Data data;
+        NotesContext db = new NotesContext();
         System.Windows.Forms.NotifyIcon notifyIcon;
 
         public NotesWindow()
         {
             InitializeComponent();
 
-            Data.load(out this.data);
+            this.db.Database.Migrate();
+            this.db.validateDb();
 
-            if (this.data.windowWidth > 0)
+            var config = this.getConfig();
+
+            if (config.WindowWidth > 0)
             {
-                this.Width = this.data.windowWidth;
+                this.Width = config.WindowWidth;
             }
 
-            if (this.data.windowHeight > 0)
+            if (config.WindowHeight > 0)
             {
-                this.Height = this.data.windowHeight;
+                this.Height = config.WindowHeight;
             }
 
-            var left = this.data.windowLeft;
+            var left = config.WindowLeft;
             if (left > 0)
             {
                 if (left > SystemParameters.PrimaryScreenWidth)
@@ -37,7 +43,7 @@ namespace NotesApp
                 this.Left = left;
             }
 
-            var top = this.data.windowTop;
+            var top = config.WindowTop;
             if (top > 0)
             {
                 if (top > SystemParameters.PrimaryScreenHeight)
@@ -48,17 +54,17 @@ namespace NotesApp
                 this.Top = top;
             }
 
-            if (this.data.isHidden == true)
+            if (config.IsHidden == true)
             {
                 this.hideWindow();
             }
 
-            if (this.data.alwaysOnTop == true)
+            if (config.AlwaysOnTop == true)
             {
                 this.setAlwaysOnTop(true);
             }
 
-            this.loadNote(this.data.currentPosition);
+            this.loadNote(config.CurrentNotePosition);
 
             // keyboard shortcuts
             var newNote = new RoutedCommand();
@@ -139,8 +145,8 @@ namespace NotesApp
         private void newNoteListener(object sender, RoutedEventArgs e)
         {
             // a new note is added at the end
-            var position = this.data.notes.Count;
-            this.data.notes.Add("");
+            this.db.Add(new Note());
+            var position = this.db.Notes.Count() - 1;
 
             this.loadNote(position);
         }
@@ -161,7 +167,8 @@ namespace NotesApp
 
         private void previousNoteListener(object sender, RoutedEventArgs e)
         {
-            var previousPosition = this.data.currentPosition - 1;
+            var config = this.getConfig();
+            var previousPosition = config.CurrentNotePosition - 1;
 
             if (previousPosition < 0)
             {
@@ -174,15 +181,21 @@ namespace NotesApp
 
         private void nextNoteListener(object sender, RoutedEventArgs e)
         {
-            var nextPosition = this.data.currentPosition + 1;
+            var config = this.getConfig();
+            var nextPosition = config.CurrentNotePosition + 1;
 
-            if (nextPosition >= this.data.notes.Count)
+            if (nextPosition >= this.db.Notes.Count())
             {
                 this.textBox.Focus();
                 return;
             }
 
             this.loadNote(nextPosition);
+        }
+
+        private Configuration getConfig()
+        {
+            return this.db.Config.First();
         }
 
         private void closeWindowListener(object sender, EventArgs e)
@@ -197,27 +210,31 @@ namespace NotesApp
 
         private void setAlwaysOnTop(bool value)
         {
+            var config = this.getConfig();
+
             this.Topmost = value;
-            this.data.alwaysOnTop = value;
+            config.AlwaysOnTop = value;
             this.AlwaysOnTopItem.IsChecked = value;
         }
 
         private void removeCurrentNote()
         {
+            var config = this.getConfig();
+
             // when there's only 1 note, don't remove it, clear it instead
-            if (this.data.notes.Count <= 1)
+            if (this.db.Notes.Count() <= 1)
             {
-                this.data.notes[0] = "";
+                var first = this.db.Notes.First();
+                first.Content = "";
                 this.textBox.Text = "";
                 this.textBox.Focus();
             }
             else
             {
-                this.data.notes.RemoveAt(this.data.currentPosition);
+                var note = this.db.Notes.ElementAt(config.CurrentNotePosition);
+                var show = config.CurrentNotePosition;
 
-                var show = this.data.currentPosition;
-
-                if (show >= this.data.notes.Count)
+                if (show >= this.db.Notes.Count())
                 {
                     show--;
                 }
@@ -228,13 +245,19 @@ namespace NotesApp
 
         private void loadNote(int position)
         {
-            if (position >= this.data.notes.Count)
+            var config = this.getConfig();
+            var count = this.db.Notes.Count();
+
+            if (position >= count)
             {
-                position = this.data.notes.Count - 1;
+                position = count - 1;
             }
 
-            this.data.currentPosition = position;
-            this.textBox.Text = this.data.notes[position];
+            var note = this.db.Notes.ToList().ElementAt(position);
+
+            config.CurrentNotePosition = position;
+
+            this.textBox.Text = note.Content;
             this.textBox.Focus();
 
             this.Title = String.Format("Notes - {0}", position + 1);
@@ -248,7 +271,7 @@ namespace NotesApp
                 this.previous.IsEnabled = true;
             }
 
-            if (position + 1 == this.data.notes.Count)
+            if (position + 1 == count)
             {
                 this.next.IsEnabled = false;
             }
@@ -260,18 +283,22 @@ namespace NotesApp
 
         private void textChanged(object sender, TextChangedEventArgs e)
         {
+            var config = this.getConfig();
+            var note = this.db.Notes.ElementAt(config.CurrentNotePosition);
+
             // save the current note when there's a change
-            this.data.notes[this.data.currentPosition] = this.textBox.Text;
+            note.Content = this.textBox.Text;
         }
 
         public void saveToDisk()
         {
-            this.data.windowWidth = this.Width;
-            this.data.windowHeight = this.Height;
-            this.data.windowLeft = this.Left;
-            this.data.windowTop = this.Top;
+            var config = this.getConfig();
+            config.WindowWidth = this.Width;
+            config.WindowHeight = this.Height;
+            config.WindowLeft = this.Left;
+            config.WindowTop = this.Top;
 
-            Data.save(ref this.data);
+            this.db.SaveChanges();
         }
 
         private void windowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -282,20 +309,26 @@ namespace NotesApp
 
         private void showWindow()
         {
-            this.data.isHidden = false;
+            var config = this.getConfig();
+
+            config.IsHidden = false;
             this.Show();
             this.Activate();
         }
 
         private void hideWindow()
         {
-            this.data.isHidden = true;
+            var config = this.getConfig();
+
+            config.IsHidden = true;
             this.Hide();
         }
 
         private void notifyIconClick(object sender, EventArgs e)
         {
-            if (this.data.isHidden == false)
+            var config = this.getConfig();
+
+            if (config.IsHidden == false)
             {
                 this.hideWindow();
             }
