@@ -21,7 +21,7 @@ jobs:
       - run: dotnet tool restore
 
       - name: Check code format
-        run: dotnet tool run dotnet-csharpier ./ --check
+        run: dotnet tool run dotnet-csharpier . --check
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
