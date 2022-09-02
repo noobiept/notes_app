@@ -20,6 +20,7 @@
             <Button x:Name="new_note" Content="Add" ToolTip="New Note (ctrl + n)" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Click="newNoteListener" />
             <Button x:Name="remove_note" Content="✗" ToolTip="Remove Note (ctrl + r)" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Click="removeNoteListener" />
 
+            <Button x:Name="options" Content="⚙" ToolTip="Options (ctrl +o)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="openOptions" />
             <Button x:Name="next" Content="▶" ToolTip="Next (ctrl + w)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="nextNoteListener" />
             <Button x:Name="previous" Content="◀" ToolTip="Previous (ctrl + q)" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Click="previousNoteListener" />
         </DockPanel>

@@ -12,6 +12,7 @@ namespace NotesApp
     {
         NotesContext db = new NotesContext();
         System.Windows.Forms.NotifyIcon notifyIcon;
+        OptionsWindow optionsWindow;
 
         public NotesWindow()
         {
@@ -221,6 +222,36 @@ namespace NotesApp
             config.AlwaysOnTop = value;
             this.AlwaysOnTopItem.IsChecked = value;
         }
+
+        private void openOptions(object sender, EventArgs e)
+        {
+            if (this.optionsWindow != null)
+            {
+                this.optionsWindow.Activate();
+            }
+            else
+            {
+                this.optionsWindow = new OptionsWindow(
+                    onClose: this.closeOptionsWindow,
+                    onResetData: this.resetData,
+                    onToggleMinimizeOnClose: this.toggleMinimizeOnClose
+                );
+                this.optionsWindow.Show();
+            }
+        }
+
+        private void closeOptionsWindow()
+        {
+            if (this.optionsWindow != null)
+            {
+                this.optionsWindow.Close();
+                this.optionsWindow = null;
+            }
+        }
+
+        private void resetData() { }
+
+        private void toggleMinimizeOnClose() { }
 
         private void removeCurrentNote()
         {
