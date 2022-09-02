@@ -2,3 +2,5 @@
 /obj/**
 /packages/**
 /bin/**
+*.user
+
