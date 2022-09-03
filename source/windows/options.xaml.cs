@@ -6,29 +6,39 @@ namespace NotesApp
     public partial class OptionsWindow : Window
     {
         private Action onClose;
-        private Action onToggleMinimizeOnClose;
+        private Action<Boolean> setMinimizeOnClose;
         private Action onResetData;
 
-        public OptionsWindow(Action onClose, Action onResetData, Action onToggleMinimizeOnClose)
+        public OptionsWindow(
+            Boolean minimizeOnCloseValue,
+            Action onClose,
+            Action onResetData,
+            Action<Boolean> setMinimizeOnClose
+        )
         {
             InitializeComponent();
 
+            this.MinimizeOnClose.IsChecked = minimizeOnCloseValue;
             this.onClose = onClose;
             this.onResetData = onResetData;
-            this.onToggleMinimizeOnClose = onToggleMinimizeOnClose;
+
+            this.setMinimizeOnClose = setMinimizeOnClose;
+            this.MinimizeOnClose.Checked += this.minimizeOnCloseListener;
+            this.MinimizeOnClose.Unchecked += this.minimizeOnCloseListener;
         }
 
-        private void onCloseListener(object sender, RoutedEventArgs e)
+        private void closeListener(object sender, RoutedEventArgs e)
         {
             this.onClose();
         }
 
-        private void onToggleMinimizeOnCloseListener(object sender, RoutedEventArgs e)
+        private void minimizeOnCloseListener(object sender, RoutedEventArgs e)
         {
-            this.onToggleMinimizeOnClose();
+            var value = this.MinimizeOnClose.IsChecked ?? false;
+            this.setMinimizeOnClose(value);
         }
 
-        private void onResetDataListener(object sender, RoutedEventArgs e)
+        private void resetDataListener(object sender, RoutedEventArgs e)
         {
             this.onResetData();
         }

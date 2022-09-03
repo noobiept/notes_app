@@ -13,7 +13,7 @@
         <Grid.ContextMenu>
             <ContextMenu>
                 <MenuItem Name="AlwaysOnTopItem" Header="Always On _Top" IsCheckable="True" Click="alwaysOnTopListener" />
-                <MenuItem Header="_Close" Click="closeWindowListener" />
+                <MenuItem Header="_Close" Click="notifyIconCloseAppListener" />
             </ContextMenu>
         </Grid.ContextMenu>
         <DockPanel>

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NotesApp.Models;
 
@@ -10,9 +11,10 @@ using NotesApp.Models;
 namespace NotesApp.Migrations
 {
     [DbContext(typeof(NotesContext))]
-    partial class NotesContextModelSnapshot : ModelSnapshot
+    [Migration("20220903031723_Config_MinimizeOnClose")]
+    partial class Config_MinimizeOnClose
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.8");

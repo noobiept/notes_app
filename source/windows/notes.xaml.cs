@@ -129,7 +129,7 @@ namespace NotesApp
 
             var close = new System.Windows.Forms.ToolStripMenuItem();
             close.Text = "Close";
-            close.Click += this.closeWindowListener;
+            close.Click += this.notifyIconCloseAppListener;
 
             contextMenu.Items.Add(about);
             contextMenu.Items.Add(show);
@@ -147,8 +147,9 @@ namespace NotesApp
         {
             // a new note is added at the end
             this.db.Add(new Note());
-            var position = this.db.Notes.Count() - 1;
+            this.db.SaveChanges();
 
+            var position = this.db.Notes.Count() - 1;
             this.loadNote(position);
         }
 
@@ -204,9 +205,9 @@ namespace NotesApp
             return this.db.Notes.ToList().ElementAt(position);
         }
 
-        private void closeWindowListener(object sender, EventArgs e)
+        private void notifyIconCloseAppListener(object sender, EventArgs e)
         {
-            this.closeWindow();
+            this.shutdownApp();
         }
 
         private void alwaysOnTopListener(object sender, EventArgs e)
@@ -231,10 +232,13 @@ namespace NotesApp
             }
             else
             {
+                var config = this.getConfig();
+
                 this.optionsWindow = new OptionsWindow(
+                    minimizeOnCloseValue: config.MinimizeOnClose,
                     onClose: this.closeOptionsWindow,
                     onResetData: this.resetData,
-                    onToggleMinimizeOnClose: this.toggleMinimizeOnClose
+                    setMinimizeOnClose: this.setMinimizeOnClose
                 );
                 this.optionsWindow.Show();
             }
@@ -251,7 +255,13 @@ namespace NotesApp
 
         private void resetData() { }
 
-        private void toggleMinimizeOnClose() { }
+        private void setMinimizeOnClose(Boolean value)
+        {
+            var config = this.getConfig();
+
+            config.MinimizeOnClose = value;
+            this.db.SaveChanges();
+        }
 
         private void removeCurrentNote()
         {
@@ -343,8 +353,17 @@ namespace NotesApp
 
         private void windowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            e.Cancel = true;
-            this.hideWindow();
+            var config = this.getConfig();
+
+            if (config.MinimizeOnClose)
+            {
+                e.Cancel = true;
+                this.hideWindow();
+            }
+            else
+            {
+                this.shutdownApp();
+            }
         }
 
         private void showWindow()
@@ -361,6 +380,8 @@ namespace NotesApp
             var config = this.getConfig();
 
             config.IsHidden = true;
+
+            this.closeOptionsWindow();
             this.Hide();
         }
 
@@ -378,7 +399,7 @@ namespace NotesApp
             }
         }
 
-        private void closeWindow()
+        private void shutdownApp()
         {
             this.saveToDisk();
             this.notifyIcon.Visible = false;

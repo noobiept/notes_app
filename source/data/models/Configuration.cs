@@ -10,6 +10,7 @@
         public double WindowTop { get; set; }
         public bool IsHidden { get; set; }
         public bool AlwaysOnTop { get; set; }
+        public bool MinimizeOnClose { get; set; }
 
         public static Configuration CreateDefault()
         {
@@ -21,6 +22,7 @@
             config.WindowTop = -1;
             config.IsHidden = false;
             config.AlwaysOnTop = false;
+            config.MinimizeOnClose = false;
 
             return config;
         }
