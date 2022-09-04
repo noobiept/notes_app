@@ -28,10 +28,14 @@ namespace NotesApp.Models
 
         public void resetData()
         {
-            this.Notes.RemoveRange(this.Notes);
-            this.Config.RemoveRange(this.Config);
-            this.SaveChanges();
-            this.validateDb();
+            using (var transaction = this.Database.BeginTransaction())
+            {
+                this.Notes.RemoveRange(this.Notes);
+                this.Config.RemoveRange(this.Config);
+                this.SaveChanges();
+                this.validateDb();
+                transaction.Commit();
+            }
         }
 
         // Make sure there's at least 1 row of notes/configuration.
