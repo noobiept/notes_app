@@ -13,6 +13,11 @@
         <SolidColorBrush x:Key="TextBoxForeground" Color="#E1E1E1" />
         <SolidColorBrush x:Key="TextBoxBackground" Color="#293134" />
  
+        <!-- TextBlock styling -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource MenuForeground}" />
+        </Style>
+        
         <!-- Button styling -->
         <Style TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource MenuForeground}" />

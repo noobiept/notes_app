@@ -1,0 +1,23 @@
+﻿<Window x:Class="NotesApp.ConfirmActionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NotesApp"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        Title="Confirm Action" Height="300" Width="400">
+    <Grid Background="{ StaticResource MenuBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition MaxHeight="35" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="{ StaticResource TextBoxBackground}">
+            <TextBlock Name="Body"  VerticalAlignment="Center" HorizontalAlignment="Center">Confirm?</TextBlock>
+        </Grid>
+        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="1">
+            <Button Name="AcceptButton" Content="Yes" Click="acceptListener" />
+            <Button Name="CancelButton" Content="Cancel" Click="cancelListener"  />
+        </StackPanel>
+    </Grid>
+</Window>

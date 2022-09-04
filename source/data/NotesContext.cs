@@ -26,6 +26,14 @@ namespace NotesApp.Models
         protected override void OnConfiguring(DbContextOptionsBuilder options) =>
             options.UseSqlite($"Data Source={DbPath}");
 
+        public void resetData()
+        {
+            this.Notes.RemoveRange(this.Notes);
+            this.Config.RemoveRange(this.Config);
+            this.SaveChanges();
+            this.validateDb();
+        }
+
         // Make sure there's at least 1 row of notes/configuration.
         public void validateDb()
         {

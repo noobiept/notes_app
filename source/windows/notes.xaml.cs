@@ -240,6 +240,7 @@ namespace NotesApp
                     onResetData: this.resetData,
                     setMinimizeOnClose: this.setMinimizeOnClose
                 );
+                this.optionsWindow.Owner = this;
                 this.optionsWindow.Show();
             }
         }
@@ -253,7 +254,11 @@ namespace NotesApp
             }
         }
 
-        private void resetData() { }
+        private void resetData()
+        {
+            this.db.resetData();
+            this.loadNote(0);
+        }
 
         private void setMinimizeOnClose(Boolean value)
         {

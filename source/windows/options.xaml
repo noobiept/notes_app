@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NotesApp"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
         Title="Options" Height="180" Width="300">
     <Window.Resources>
 
@@ -27,7 +28,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <CheckBox Name="MinimizeOnClose" Grid.Row="0" Margin="10" VerticalAlignment="Center">Minimize on close</CheckBox>
-            <Button Grid.Row="1" HorizontalAlignment="Left" Width="100" Content="Reset data"  />
+            <Button Grid.Row="1" HorizontalAlignment="Left" Width="100" Content="Reset data" Click="resetDataListener"  />
         </Grid>
             <Button Grid.Row="2" Content="Close" Width="100" HorizontalAlignment="Right" Click="closeListener" />
     </Grid>

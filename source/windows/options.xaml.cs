@@ -40,7 +40,13 @@ namespace NotesApp
 
         private void resetDataListener(object sender, RoutedEventArgs e)
         {
-            this.onResetData();
+            var confirmReset = new ConfirmActionWindow(
+                title: "Confirm data reset",
+                body: "Do you want to reset all data?",
+                onAccept: () => this.onResetData()
+            );
+            confirmReset.Owner = this;
+            confirmReset.ShowDialog();
         }
     }
 }
