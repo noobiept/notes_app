@@ -30,6 +30,6 @@
             <CheckBox Name="MinimizeOnClose" Grid.Row="0" Margin="10" VerticalAlignment="Center">Minimize on close</CheckBox>
             <Button Grid.Row="1" HorizontalAlignment="Left" Width="100" Content="Reset data" Click="resetDataListener"  />
         </Grid>
-            <Button Grid.Row="2" Content="Close" Width="100" HorizontalAlignment="Right" Click="closeListener" />
+        <Button Grid.Row="2" Content="Close" Width="100" HorizontalAlignment="Right" Click="closeListener" />
     </Grid>
 </Window>

@@ -1,11 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace NotesApp
 {
     public partial class OptionsWindow : Window
     {
-        private Action onClose;
         private Action<Boolean> setMinimizeOnClose;
         private Action onResetData;
 
@@ -19,17 +19,18 @@ namespace NotesApp
             InitializeComponent();
 
             this.MinimizeOnClose.IsChecked = minimizeOnCloseValue;
-            this.onClose = onClose;
             this.onResetData = onResetData;
 
             this.setMinimizeOnClose = setMinimizeOnClose;
             this.MinimizeOnClose.Checked += this.minimizeOnCloseListener;
             this.MinimizeOnClose.Unchecked += this.minimizeOnCloseListener;
+
+            this.Closing += (object sender, CancelEventArgs e) => onClose();
         }
 
         private void closeListener(object sender, RoutedEventArgs e)
         {
-            this.onClose();
+            this.Close();
         }
 
         private void minimizeOnCloseListener(object sender, RoutedEventArgs e)

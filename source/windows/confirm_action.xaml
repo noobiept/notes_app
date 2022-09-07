@@ -16,8 +16,8 @@
             <TextBlock Name="Body"  VerticalAlignment="Center" HorizontalAlignment="Center">Confirm?</TextBlock>
         </Grid>
         <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="1">
-            <Button Name="AcceptButton" Content="Yes" Click="acceptListener" />
-            <Button Name="CancelButton" Content="Cancel" Click="cancelListener"  />
+            <Button Name="AcceptButton" Width="100" Content="Yes" Click="acceptListener" />
+            <Button Name="CancelButton" Width="100" Content="Cancel" Click="cancelListener"  />
         </StackPanel>
     </Grid>
 </Window>

@@ -57,7 +57,7 @@ namespace NotesApp
 
             if (config.IsHidden == true)
             {
-                this.hideWindow();
+                this.hideAllWindows();
             }
 
             if (config.AlwaysOnTop == true)
@@ -105,7 +105,7 @@ namespace NotesApp
                     hide,
                     (object sender, ExecutedRoutedEventArgs e) =>
                     {
-                        this.hideWindow();
+                        this.hideAllWindows();
                     }
                 )
             );
@@ -124,7 +124,7 @@ namespace NotesApp
             show.Text = "Show";
             show.Click += (object sender, EventArgs e) =>
             {
-                this.showWindow();
+                this.showAllWindows();
             };
 
             var close = new System.Windows.Forms.ToolStripMenuItem();
@@ -236,7 +236,7 @@ namespace NotesApp
 
                 this.optionsWindow = new OptionsWindow(
                     minimizeOnCloseValue: config.MinimizeOnClose,
-                    onClose: this.closeOptionsWindow,
+                    onClose: this.optionsWindowClosed,
                     onResetData: this.resetData,
                     setMinimizeOnClose: this.setMinimizeOnClose
                 );
@@ -245,11 +245,10 @@ namespace NotesApp
             }
         }
 
-        private void closeOptionsWindow()
+        private void optionsWindowClosed()
         {
             if (this.optionsWindow != null)
             {
-                this.optionsWindow.Close();
                 this.optionsWindow = null;
             }
         }
@@ -363,7 +362,7 @@ namespace NotesApp
             if (config.MinimizeOnClose)
             {
                 e.Cancel = true;
-                this.hideWindow();
+                this.hideAllWindows();
             }
             else
             {
@@ -371,23 +370,29 @@ namespace NotesApp
             }
         }
 
-        private void showWindow()
+        private void showAllWindows()
         {
             var config = this.getConfig();
 
             config.IsHidden = false;
-            this.Show();
+
+            foreach (Window window in App.Current.Windows)
+            {
+                window.Show();
+            }
+
             this.Activate();
         }
 
-        private void hideWindow()
+        private void hideAllWindows()
         {
             var config = this.getConfig();
-
             config.IsHidden = true;
 
-            this.closeOptionsWindow();
-            this.Hide();
+            foreach (Window window in App.Current.Windows)
+            {
+                window.Hide();
+            }
         }
 
         private void notifyIconClick(object sender, EventArgs e)
@@ -396,11 +401,11 @@ namespace NotesApp
 
             if (config.IsHidden == false)
             {
-                this.hideWindow();
+                this.hideAllWindows();
             }
             else
             {
-                this.showWindow();
+                this.showAllWindows();
             }
         }
 
