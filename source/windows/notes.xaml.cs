@@ -105,7 +105,12 @@ namespace NotesApp
                     hide,
                     (object sender, ExecutedRoutedEventArgs e) =>
                     {
-                        this.hideAllWindows();
+                        var config = this.getConfig();
+
+                        if (config.MinimizeOnClose)
+                        {
+                            this.hideAllWindows();
+                        }
                     }
                 )
             );
@@ -247,10 +252,8 @@ namespace NotesApp
 
         private void optionsWindowClosed()
         {
-            if (this.optionsWindow != null)
-            {
-                this.optionsWindow = null;
-            }
+            this.optionsWindow = null;
+            this.Activate();
         }
 
         private void resetData()

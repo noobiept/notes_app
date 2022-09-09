@@ -17,7 +17,7 @@
         </Grid>
         <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="1">
             <Button Name="AcceptButton" Width="100" Content="Yes" Click="acceptListener" />
-            <Button Name="CancelButton" Width="100" Content="Cancel" Click="cancelListener"  />
+            <Button Name="CancelButton" Width="100" Content="Cancel" Click="cancelListener" IsCancel="True"  />
         </StackPanel>
     </Grid>
 </Window>
