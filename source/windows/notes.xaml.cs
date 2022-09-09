@@ -115,6 +115,10 @@ namespace NotesApp
                 )
             );
 
+            var options = new RoutedCommand();
+            options.InputGestures.Add(new KeyGesture(Key.O, ModifierKeys.Control));
+            CommandBindings.Add(new CommandBinding(options, openOptions));
+
             // system tray icon
             var contextMenu = new System.Windows.Forms.ContextMenuStrip();
 
