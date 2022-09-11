@@ -12,7 +12,7 @@
             <RowDefinition />
             <RowDefinition MaxHeight="35" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="{ StaticResource TextBoxBackground}">
+        <Grid Grid.Row="0" Background="{ StaticResource ContentBackground}">
             <TextBlock Name="Body"  VerticalAlignment="Center" HorizontalAlignment="Center">Confirm?</TextBlock>
         </Grid>
         <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="1">
