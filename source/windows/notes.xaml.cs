@@ -351,8 +351,11 @@ namespace NotesApp
 
             config.CurrentNotePosition = position;
 
+            // disable the text changed listener so it doesn't interfere with the loading of the next note
+            this.setTextChangedListener(false);
             this.textBox.Text = note.Content;
             this.textBox.Focus();
+            this.setTextChangedListener(true);
 
             this.Title = String.Format("Notes - {0}", position + 1);
 
@@ -385,6 +388,18 @@ namespace NotesApp
                 // save the current note when there's a change
                 note.Content = this.textBox.Text;
                 db.SaveChanges();
+            }
+        }
+
+        private void setTextChangedListener(bool enable)
+        {
+            if (enable)
+            {
+                this.textBox.TextChanged += this.textChanged;
+            }
+            else
+            {
+                this.textBox.TextChanged -= this.textChanged;
             }
         }
 
