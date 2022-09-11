@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NotesApp.Models;
+using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -6,22 +7,20 @@ namespace NotesApp
 {
     public partial class OptionsWindow : Window
     {
-        private Action<Boolean> setMinimizeOnClose;
         private Action onResetData;
 
-        public OptionsWindow(
-            Boolean minimizeOnCloseValue,
-            Action onClose,
-            Action onResetData,
-            Action<Boolean> setMinimizeOnClose
-        )
+        public OptionsWindow(Action onClose, Action onResetData)
         {
             InitializeComponent();
 
-            this.MinimizeOnClose.IsChecked = minimizeOnCloseValue;
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
+                this.MinimizeOnClose.IsChecked = config.MinimizeOnClose;
+            }
+
             this.onResetData = onResetData;
 
-            this.setMinimizeOnClose = setMinimizeOnClose;
             this.MinimizeOnClose.Checked += this.minimizeOnCloseListener;
             this.MinimizeOnClose.Unchecked += this.minimizeOnCloseListener;
 
@@ -35,8 +34,13 @@ namespace NotesApp
 
         private void minimizeOnCloseListener(object sender, RoutedEventArgs e)
         {
-            var value = this.MinimizeOnClose.IsChecked ?? false;
-            this.setMinimizeOnClose(value);
+            using (var db = new NotesContext())
+            {
+                var value = this.MinimizeOnClose.IsChecked ?? false;
+                var config = db.getConfig();
+                config.MinimizeOnClose = value;
+                db.SaveChanges();
+            }
         }
 
         private void resetDataListener(object sender, RoutedEventArgs e)

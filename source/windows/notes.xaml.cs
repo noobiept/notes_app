@@ -10,7 +10,6 @@ namespace NotesApp
 {
     public partial class NotesWindow : Window
     {
-        NotesContext db = new NotesContext();
         System.Windows.Forms.NotifyIcon notifyIcon;
         OptionsWindow optionsWindow;
 
@@ -18,56 +17,95 @@ namespace NotesApp
         {
             InitializeComponent();
 
-            this.db.Database.Migrate();
-            this.db.validateDb();
-
-            var config = this.getConfig();
-
-            if (config.WindowWidth > 0)
+            using (var db = new NotesContext())
             {
-                this.Width = config.WindowWidth;
-            }
+                db.Database.Migrate();
+                db.validateDb();
 
-            if (config.WindowHeight > 0)
-            {
-                this.Height = config.WindowHeight;
-            }
+                var config = db.getConfig();
 
-            var left = config.WindowLeft;
-            if (left > 0)
-            {
-                if (left > SystemParameters.PrimaryScreenWidth)
+                if (config.WindowWidth > 0)
                 {
-                    left = SystemParameters.PrimaryScreenWidth - 100;
+                    this.Width = config.WindowWidth;
                 }
 
-                this.Left = left;
-            }
-
-            var top = config.WindowTop;
-            if (top > 0)
-            {
-                if (top > SystemParameters.PrimaryScreenHeight)
+                if (config.WindowHeight > 0)
                 {
-                    top = SystemParameters.PrimaryScreenHeight - 100;
+                    this.Height = config.WindowHeight;
                 }
 
-                this.Top = top;
+                var left = config.WindowLeft;
+                if (left > 0)
+                {
+                    if (left > SystemParameters.PrimaryScreenWidth)
+                    {
+                        left = SystemParameters.PrimaryScreenWidth - 100;
+                    }
+
+                    this.Left = left;
+                }
+
+                var top = config.WindowTop;
+                if (top > 0)
+                {
+                    if (top > SystemParameters.PrimaryScreenHeight)
+                    {
+                        top = SystemParameters.PrimaryScreenHeight - 100;
+                    }
+
+                    this.Top = top;
+                }
+
+                if (config.IsHidden == true)
+                {
+                    this.hideAllWindows(db);
+                }
+
+                if (config.AlwaysOnTop == true)
+                {
+                    this.setAlwaysOnTop(true);
+                }
+
+                this.loadNote(db, config.CurrentNotePosition);
             }
 
-            if (config.IsHidden == true)
+            this.setupKeyboardShortcuts();
+            this.setupSystemTray();
+        }
+
+        private void setupSystemTray()
+        {
+            var contextMenu = new System.Windows.Forms.ContextMenuStrip();
+
+            var about = new System.Windows.Forms.ToolStripMenuItem();
+            about.Text = "About";
+            about.Click += (object sender, EventArgs e) =>
             {
-                this.hideAllWindows();
-            }
+                Utilities.openExternalUrl(Constants.aboutUrl);
+            };
 
-            if (config.AlwaysOnTop == true)
-            {
-                this.setAlwaysOnTop(true);
-            }
+            var show = new System.Windows.Forms.ToolStripMenuItem();
+            show.Text = "Show";
+            show.Click += onShowWindowsListener;
 
-            this.loadNote(config.CurrentNotePosition);
+            var close = new System.Windows.Forms.ToolStripMenuItem();
+            close.Text = "Close";
+            close.Click += this.notifyIconCloseAppListener;
 
-            // keyboard shortcuts
+            contextMenu.Items.Add(about);
+            contextMenu.Items.Add(show);
+            contextMenu.Items.Add(close);
+
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon();
+            this.notifyIcon.Text = "Notes App";
+            this.notifyIcon.Icon = new System.Drawing.Icon(@"assets/icon.ico");
+            this.notifyIcon.DoubleClick += this.notifyIconClick;
+            this.notifyIcon.ContextMenuStrip = contextMenu;
+            this.notifyIcon.Visible = true;
+        }
+
+        private void setupKeyboardShortcuts()
+        {
             var newNote = new RoutedCommand();
             newNote.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
             CommandBindings.Add(new CommandBinding(newNote, newNoteListener));
@@ -93,73 +131,67 @@ namespace NotesApp
                 CommandBindings.Add(
                     new CommandBinding(
                         load,
-                        (object sender, ExecutedRoutedEventArgs e) => this.loadNote(position)
+                        (object sender, ExecutedRoutedEventArgs e) =>
+                            this.loadNoteListener(position)
                     )
                 );
             }
 
             var hide = new RoutedCommand();
             hide.InputGestures.Add(new KeyGesture(Key.Escape));
-            CommandBindings.Add(
-                new CommandBinding(
-                    hide,
-                    (object sender, ExecutedRoutedEventArgs e) =>
-                    {
-                        var config = this.getConfig();
-
-                        if (config.MinimizeOnClose)
-                        {
-                            this.hideAllWindows();
-                        }
-                    }
-                )
-            );
+            CommandBindings.Add(new CommandBinding(hide, this.onEscPress));
 
             var options = new RoutedCommand();
             options.InputGestures.Add(new KeyGesture(Key.O, ModifierKeys.Control));
             CommandBindings.Add(new CommandBinding(options, openOptions));
+        }
 
-            // system tray icon
-            var contextMenu = new System.Windows.Forms.ContextMenuStrip();
-
-            var about = new System.Windows.Forms.ToolStripMenuItem();
-            about.Text = "About";
-            about.Click += (object sender, EventArgs e) =>
+        private void loadNoteListener(int position)
+        {
+            using (var db = new NotesContext())
             {
-                Utilities.openExternalUrl(Constants.aboutUrl);
-            };
+                this.loadNote(db, position);
+                db.SaveChanges();
+            }
+        }
 
-            var show = new System.Windows.Forms.ToolStripMenuItem();
-            show.Text = "Show";
-            show.Click += (object sender, EventArgs e) =>
+        private void onShowWindowsListener(object sender, EventArgs e)
+        {
+            using (var db = new NotesContext())
             {
-                this.showAllWindows();
-            };
+                this.showAllWindows(db);
+            }
+        }
 
-            var close = new System.Windows.Forms.ToolStripMenuItem();
-            close.Text = "Close";
-            close.Click += this.notifyIconCloseAppListener;
+        private void onEscPress(object sender, ExecutedRoutedEventArgs e)
+        {
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
 
-            contextMenu.Items.Add(about);
-            contextMenu.Items.Add(show);
-            contextMenu.Items.Add(close);
-
-            this.notifyIcon = new System.Windows.Forms.NotifyIcon();
-            this.notifyIcon.Text = "Notes App";
-            this.notifyIcon.Icon = new System.Drawing.Icon(@"assets/icon.ico");
-            this.notifyIcon.DoubleClick += this.notifyIconClick;
-            this.notifyIcon.ContextMenuStrip = contextMenu;
-            this.notifyIcon.Visible = true;
+                if (config.MinimizeOnClose)
+                {
+                    this.hideAllWindows(db);
+                    db.SaveChanges();
+                }
+            }
         }
 
         private void newNoteListener(object sender, RoutedEventArgs e)
         {
-            // a new note is added at the end
-            this.db.Add(new Note());
-            this.db.SaveChanges();
+            using (var db = new NotesContext())
+            {
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    // a new note is added at the end
+                    db.Notes.Add(new Note());
 
-            var position = this.db.Notes.Count() - 1;
-            this.loadNote(position);
+                    var position = db.Notes.Count() - 1;
+                    this.loadNote(db, position);
+                    db.SaveChanges();
+                    transaction.Commit();
+                }
+            }
         }
 
         private void removeNoteListener(object sender, RoutedEventArgs e)
@@ -178,40 +210,43 @@ namespace NotesApp
 
         private void previousNoteListener(object sender, RoutedEventArgs e)
         {
-            var config = this.getConfig();
-            var previousPosition = config.CurrentNotePosition - 1;
-
-            if (previousPosition < 0)
+            using (var db = new NotesContext())
             {
-                this.textBox.Focus();
-                return;
-            }
+                var config = db.getConfig();
+                var previousPosition = config.CurrentNotePosition - 1;
 
-            this.loadNote(previousPosition);
+                if (previousPosition < 0)
+                {
+                    this.textBox.Focus();
+                    return;
+                }
+
+                this.loadNote(db, previousPosition);
+                db.SaveChanges();
+            }
         }
 
         private void nextNoteListener(object sender, RoutedEventArgs e)
         {
-            var config = this.getConfig();
-            var nextPosition = config.CurrentNotePosition + 1;
-
-            if (nextPosition >= this.db.Notes.Count())
+            using (var db = new NotesContext())
             {
-                this.textBox.Focus();
-                return;
+                var config = db.getConfig();
+                var nextPosition = config.CurrentNotePosition + 1;
+
+                if (nextPosition >= db.Notes.Count())
+                {
+                    this.textBox.Focus();
+                    return;
+                }
+
+                this.loadNote(db, nextPosition);
+                db.SaveChanges();
             }
-
-            this.loadNote(nextPosition);
         }
 
-        private Configuration getConfig()
+        private Note getNoteAt(NotesContext db, int position)
         {
-            return this.db.Config.First();
-        }
-
-        private Note getNoteAt(int position)
-        {
-            return this.db.Notes.ToList().ElementAt(position);
+            return db.Notes.ToList().ElementAt(position);
         }
 
         private void notifyIconCloseAppListener(object sender, EventArgs e)
@@ -226,11 +261,15 @@ namespace NotesApp
 
         private void setAlwaysOnTop(bool value)
         {
-            var config = this.getConfig();
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
 
-            this.Topmost = value;
-            config.AlwaysOnTop = value;
-            this.AlwaysOnTopItem.IsChecked = value;
+                this.Topmost = value;
+                config.AlwaysOnTop = value;
+                this.AlwaysOnTopItem.IsChecked = value;
+                db.SaveChanges();
+            }
         }
 
         private void openOptions(object sender, EventArgs e)
@@ -241,13 +280,9 @@ namespace NotesApp
             }
             else
             {
-                var config = this.getConfig();
-
                 this.optionsWindow = new OptionsWindow(
-                    minimizeOnCloseValue: config.MinimizeOnClose,
                     onClose: this.optionsWindowClosed,
-                    onResetData: this.resetData,
-                    setMinimizeOnClose: this.setMinimizeOnClose
+                    onResetData: this.resetData
                 );
                 this.optionsWindow.Owner = this;
                 this.optionsWindow.Show();
@@ -262,59 +297,57 @@ namespace NotesApp
 
         private void resetData()
         {
-            this.db.resetData();
-            this.loadNote(0);
-        }
-
-        private void setMinimizeOnClose(Boolean value)
-        {
-            var config = this.getConfig();
-
-            config.MinimizeOnClose = value;
-            this.db.SaveChanges();
+            using (var db = new NotesContext())
+            {
+                db.resetData();
+                this.loadNote(db, 0);
+            }
         }
 
         private void removeCurrentNote()
         {
-            var config = this.getConfig();
-
-            // when there's only 1 note, don't remove it, clear it instead
-            if (this.db.Notes.Count() <= 1)
+            using (var db = new NotesContext())
             {
-                var first = this.db.Notes.First();
-                first.Content = "";
-                this.textBox.Text = "";
-                this.textBox.Focus();
-            }
-            else
-            {
-                var note = this.getNoteAt(config.CurrentNotePosition);
-                this.db.Notes.Remove(note);
+                var config = db.getConfig();
 
-                var show = config.CurrentNotePosition;
-
-                if (show >= this.db.Notes.Count())
+                // when there's only 1 note, don't remove it, clear it instead
+                if (db.Notes.Count() <= 1)
                 {
-                    show--;
+                    var first = db.Notes.First();
+                    first.Content = "";
+                    this.textBox.Text = "";
+                    this.textBox.Focus();
+                }
+                else
+                {
+                    var note = this.getNoteAt(db, config.CurrentNotePosition);
+                    db.Notes.Remove(note);
+
+                    var show = config.CurrentNotePosition;
+
+                    if (show >= db.Notes.Count())
+                    {
+                        show--;
+                    }
+
+                    this.loadNote(db, show);
                 }
 
-                this.loadNote(show);
+                db.SaveChanges();
             }
-
-            this.db.SaveChanges();
         }
 
-        private void loadNote(int position)
+        private void loadNote(NotesContext db, int position)
         {
-            var config = this.getConfig();
-            var count = this.db.Notes.Count();
+            var config = db.getConfig();
+            var count = db.Notes.Count();
 
             if (position >= count)
             {
                 position = count - 1;
             }
 
-            var note = this.getNoteAt(position);
+            var note = this.getNoteAt(db, position);
 
             config.CurrentNotePosition = position;
 
@@ -344,42 +377,53 @@ namespace NotesApp
 
         private void textChanged(object sender, TextChangedEventArgs e)
         {
-            var config = this.getConfig();
-            var note = this.getNoteAt(config.CurrentNotePosition);
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
+                var note = this.getNoteAt(db, config.CurrentNotePosition);
 
-            // save the current note when there's a change
-            note.Content = this.textBox.Text;
+                // save the current note when there's a change
+                note.Content = this.textBox.Text;
+                db.SaveChanges();
+            }
         }
 
-        public void saveToDisk()
+        public void saveWindowPositionDimension()
         {
-            var config = this.getConfig();
-            config.WindowWidth = this.Width;
-            config.WindowHeight = this.Height;
-            config.WindowLeft = this.Left;
-            config.WindowTop = this.Top;
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
+                config.WindowWidth = this.Width;
+                config.WindowHeight = this.Height;
+                config.WindowLeft = this.Left;
+                config.WindowTop = this.Top;
 
-            this.db.SaveChanges();
+                db.SaveChanges();
+            }
         }
 
         private void windowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var config = this.getConfig();
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
 
-            if (config.MinimizeOnClose)
-            {
-                e.Cancel = true;
-                this.hideAllWindows();
-            }
-            else
-            {
-                this.shutdownApp();
+                if (config.MinimizeOnClose)
+                {
+                    e.Cancel = true;
+                    this.hideAllWindows(db);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    this.shutdownApp();
+                }
             }
         }
 
-        private void showAllWindows()
+        private void showAllWindows(NotesContext db)
         {
-            var config = this.getConfig();
+            var config = db.getConfig();
 
             config.IsHidden = false;
 
@@ -391,9 +435,9 @@ namespace NotesApp
             this.Activate();
         }
 
-        private void hideAllWindows()
+        private void hideAllWindows(NotesContext db)
         {
-            var config = this.getConfig();
+            var config = db.getConfig();
             config.IsHidden = true;
 
             foreach (Window window in App.Current.Windows)
@@ -404,21 +448,26 @@ namespace NotesApp
 
         private void notifyIconClick(object sender, EventArgs e)
         {
-            var config = this.getConfig();
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
 
-            if (config.IsHidden == false)
-            {
-                this.hideAllWindows();
-            }
-            else
-            {
-                this.showAllWindows();
+                if (config.IsHidden == false)
+                {
+                    this.hideAllWindows(db);
+                }
+                else
+                {
+                    this.showAllWindows(db);
+                }
+
+                db.SaveChanges();
             }
         }
 
         private void shutdownApp()
         {
-            this.saveToDisk();
+            this.saveWindowPositionDimension();
             this.notifyIcon.Visible = false;
             Application.Current.Shutdown();
         }

@@ -8,7 +8,7 @@ namespace NotesApp
         {
             var notesWindow = (NotesWindow)this.MainWindow;
 
-            notesWindow.saveToDisk();
+            notesWindow.saveWindowPositionDimension();
         }
     }
 }

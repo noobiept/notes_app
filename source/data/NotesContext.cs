@@ -64,5 +64,10 @@ namespace NotesApp.Models
                 this.SaveChanges();
             }
         }
+
+        public Configuration getConfig()
+        {
+            return this.Config.First();
+        }
     }
 }
