@@ -21,6 +21,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>assets\icon.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />

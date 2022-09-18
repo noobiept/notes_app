@@ -24,7 +24,7 @@ namespace NotesApp
             this.MinimizeOnClose.Checked += this.minimizeOnCloseListener;
             this.MinimizeOnClose.Unchecked += this.minimizeOnCloseListener;
 
-            this.Closing += (object sender, CancelEventArgs e) => onClose();
+            this.Closing += (object? sender, CancelEventArgs e) => onClose();
         }
 
         private void closeListener(object sender, RoutedEventArgs e)

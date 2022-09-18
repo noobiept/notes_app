@@ -10,8 +10,8 @@ namespace NotesApp
 {
     public partial class NotesWindow : Window
     {
-        System.Windows.Forms.NotifyIcon notifyIcon;
-        OptionsWindow optionsWindow;
+        System.Windows.Forms.NotifyIcon notifyIcon = default!;
+        OptionsWindow? optionsWindow = null;
 
         public NotesWindow()
         {
@@ -79,7 +79,7 @@ namespace NotesApp
 
             var about = new System.Windows.Forms.ToolStripMenuItem();
             about.Text = "About";
-            about.Click += (object sender, EventArgs e) =>
+            about.Click += (object? sender, EventArgs e) =>
             {
                 Utilities.openExternalUrl(Constants.aboutUrl);
             };
@@ -155,7 +155,7 @@ namespace NotesApp
             }
         }
 
-        private void onShowWindowsListener(object sender, EventArgs e)
+        private void onShowWindowsListener(object? sender, EventArgs e)
         {
             using (var db = new NotesContext())
             {
@@ -163,7 +163,7 @@ namespace NotesApp
             }
         }
 
-        private void onEscPress(object sender, ExecutedRoutedEventArgs e)
+        private void onEscPress(object? sender, ExecutedRoutedEventArgs e)
         {
             using (var db = new NotesContext())
             {
@@ -249,12 +249,12 @@ namespace NotesApp
             return db.Notes.ToList().ElementAt(position);
         }
 
-        private void notifyIconCloseAppListener(object sender, EventArgs e)
+        private void notifyIconCloseAppListener(object? sender, EventArgs e)
         {
             this.shutdownApp();
         }
 
-        private void alwaysOnTopListener(object sender, EventArgs e)
+        private void alwaysOnTopListener(object? sender, EventArgs e)
         {
             this.setAlwaysOnTop(!this.Topmost);
         }
@@ -461,7 +461,7 @@ namespace NotesApp
             }
         }
 
-        private void notifyIconClick(object sender, EventArgs e)
+        private void notifyIconClick(object? sender, EventArgs e)
         {
             using (var db = new NotesContext())
             {

@@ -7,8 +7,8 @@ namespace NotesApp.Models
 {
     public class NotesContext : DbContext
     {
-        public DbSet<Note> Notes { get; set; }
-        public DbSet<Configuration> Config { get; set; }
+        public DbSet<Note> Notes { get; set; } = default!;
+        public DbSet<Configuration> Config { get; set; } = default!;
 
         public string DbPath { get; }
 
