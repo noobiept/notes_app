@@ -312,34 +312,35 @@ namespace NotesApp
             {
                 using (var transaction = db.Database.BeginTransaction())
                 {
-                    var config = db.getConfig();
+                    var position = 0;
 
-                    // when there's only 1 note, don't remove it, clear it instead
+                    // need to make sure there's always a note created, so when removing the last note add a new one
                     if (db.Notes.Count() <= 1)
                     {
                         var first = db.Notes.First();
-                        first.Content = "";
-                        this.textBox.Text = "";
-                        this.textBox.Focus();
+                        db.Notes.Remove(first);
+
+                        var newFirst = db.Notes.Add(new Note());
                         db.SaveChanges();
                     }
                     else
                     {
+                        var config = db.getConfig();
                         var note = this.getNoteAt(db, config.CurrentNotePosition);
                         db.Notes.Remove(note);
                         db.SaveChanges();
 
-                        var show = config.CurrentNotePosition;
+                        position = config.CurrentNotePosition;
 
-                        if (show >= db.Notes.Count())
+                        if (position >= db.Notes.Count())
                         {
-                            show--;
+                            position--;
                         }
-
-                        this.loadNote(db, show);
-                        db.SaveChanges();
                     }
 
+                    this.loadNote(db, position);
+
+                    db.SaveChanges();
                     transaction.Commit();
                 }
             }
