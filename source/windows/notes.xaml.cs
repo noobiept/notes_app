@@ -185,6 +185,7 @@ namespace NotesApp
                 {
                     // a new note is added at the end
                     db.Notes.Add(new Note());
+                    db.SaveChanges();
 
                     var position = db.Notes.Count() - 1;
                     this.loadNote(db, position);
@@ -308,32 +309,38 @@ namespace NotesApp
         {
             using (var db = new NotesContext())
             {
-                var config = db.getConfig();
-
-                // when there's only 1 note, don't remove it, clear it instead
-                if (db.Notes.Count() <= 1)
+                using (var transaction = db.Database.BeginTransaction())
                 {
-                    var first = db.Notes.First();
-                    first.Content = "";
-                    this.textBox.Text = "";
-                    this.textBox.Focus();
-                }
-                else
-                {
-                    var note = this.getNoteAt(db, config.CurrentNotePosition);
-                    db.Notes.Remove(note);
+                    var config = db.getConfig();
 
-                    var show = config.CurrentNotePosition;
-
-                    if (show >= db.Notes.Count())
+                    // when there's only 1 note, don't remove it, clear it instead
+                    if (db.Notes.Count() <= 1)
                     {
-                        show--;
+                        var first = db.Notes.First();
+                        first.Content = "";
+                        this.textBox.Text = "";
+                        this.textBox.Focus();
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        var note = this.getNoteAt(db, config.CurrentNotePosition);
+                        db.Notes.Remove(note);
+                        db.SaveChanges();
+
+                        var show = config.CurrentNotePosition;
+
+                        if (show >= db.Notes.Count())
+                        {
+                            show--;
+                        }
+
+                        this.loadNote(db, show);
+                        db.SaveChanges();
                     }
 
-                    this.loadNote(db, show);
+                    transaction.Commit();
                 }
-
-                db.SaveChanges();
             }
         }
 
