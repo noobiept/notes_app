@@ -27,7 +27,15 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <CheckBox Name="MinimizeOnClose" Grid.Row="0" Margin="10" VerticalAlignment="Center">Minimize on close</CheckBox>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <CheckBox Name="MinimizeOnClose" Grid.Column="0" Margin="10" VerticalAlignment="Center">Minimize on close</CheckBox>
+                <CheckBox Name="AlwaysOnTop" Grid.Column="1" Margin="10" VerticalAlignment="Center">Always on top</CheckBox>
+            </Grid>
             <Button Grid.Row="1" HorizontalAlignment="Left" Width="100" Content="Reset data" Click="resetDataListener"  />
         </Grid>
         <Button Grid.Row="2" Content="Close" IsCancel="True" Width="100" HorizontalAlignment="Right" Click="closeListener" />

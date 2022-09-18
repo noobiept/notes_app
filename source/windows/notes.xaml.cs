@@ -283,7 +283,8 @@ namespace NotesApp
             {
                 this.optionsWindow = new OptionsWindow(
                     onClose: this.optionsWindowClosed,
-                    onResetData: this.resetData
+                    onResetData: this.resetData,
+                    setAlwaysOnTop: setAlwaysOnTop
                 );
                 this.optionsWindow.Owner = this;
                 this.optionsWindow.Show();

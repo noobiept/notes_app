@@ -9,7 +9,7 @@ namespace NotesApp
     {
         private Action onResetData;
 
-        public OptionsWindow(Action onClose, Action onResetData)
+        public OptionsWindow(Action onClose, Action onResetData, Action<bool> setAlwaysOnTop)
         {
             InitializeComponent();
 
@@ -17,12 +17,17 @@ namespace NotesApp
             {
                 var config = db.getConfig();
                 this.MinimizeOnClose.IsChecked = config.MinimizeOnClose;
+                this.AlwaysOnTop.IsChecked = config.AlwaysOnTop;
             }
 
             this.onResetData = onResetData;
 
             this.MinimizeOnClose.Checked += this.minimizeOnCloseListener;
             this.MinimizeOnClose.Unchecked += this.minimizeOnCloseListener;
+
+            this.AlwaysOnTop.Checked += (object sender, RoutedEventArgs e) => setAlwaysOnTop(true);
+            this.AlwaysOnTop.Unchecked += (object sender, RoutedEventArgs e) =>
+                setAlwaysOnTop(false);
 
             this.Closing += (object? sender, CancelEventArgs e) => onClose();
         }
