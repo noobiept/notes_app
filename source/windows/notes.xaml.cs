@@ -425,7 +425,7 @@ namespace NotesApp
             }
         }
 
-        private void windowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void windowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             using (var db = new NotesContext())
             {
@@ -492,6 +492,7 @@ namespace NotesApp
         {
             this.saveWindowPositionDimension();
             this.notifyIcon.Visible = false;
+            this.Closing -= this.windowClosing;
             Application.Current.Shutdown();
         }
     }
