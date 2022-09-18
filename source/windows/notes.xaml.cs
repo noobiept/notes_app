@@ -394,6 +394,7 @@ namespace NotesApp
 
                 // save the current note when there's a change
                 note.Content = this.textBox.Text;
+                note.Modified = DateTime.Now;
                 db.SaveChanges();
             }
         }
