@@ -13,13 +13,7 @@ namespace NotesApp
         {
             InitializeComponent();
 
-            using (var db = new NotesContext())
-            {
-                var config = db.getConfig();
-                this.MinimizeOnClose.IsChecked = config.MinimizeOnClose;
-                this.AlwaysOnTop.IsChecked = config.AlwaysOnTop;
-            }
-
+            this.updateState();
             this.onResetData = onResetData;
 
             this.MinimizeOnClose.Checked += this.minimizeOnCloseListener;
@@ -35,6 +29,16 @@ namespace NotesApp
         private void closeListener(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void updateState()
+        {
+            using (var db = new NotesContext())
+            {
+                var config = db.getConfig();
+                this.MinimizeOnClose.IsChecked = config.MinimizeOnClose;
+                this.AlwaysOnTop.IsChecked = config.AlwaysOnTop;
+            }
         }
 
         private void minimizeOnCloseListener(object sender, RoutedEventArgs e)
@@ -53,7 +57,11 @@ namespace NotesApp
             var confirmReset = new ConfirmActionWindow(
                 title: "Confirm data reset",
                 body: "Do you want to reset all data?",
-                onAccept: () => this.onResetData()
+                onAccept: () =>
+                {
+                    this.onResetData();
+                    this.updateState();
+                }
             );
             confirmReset.Owner = this;
             confirmReset.ShowDialog();
